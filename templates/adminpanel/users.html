@@ -1,0 +1,64 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="admin-hero mb-4">
+  <div>
+    <p class="eyebrow">Admin / Users</p>
+    <h2 class="display-5 text-white mb-0">User Directory</h2>
+    <p class="text-light mb-0">Review and export your collectors and customers</p>
+  </div>
+  <div class="d-flex align-items-center">
+    <a href="{% url 'admin_dashboard' %}" class="btn btn-outline-light mr-2">Back to Dashboard</a>
+    <a href="{% url 'export_users_csv' %}" class="btn btn-light mr-2">Export CSV</a>
+    <a href="{% url 'export_users_pdf' %}" class="btn btn-gold">Export PDF</a>
+  </div>
+</div>
+
+<div class="admin-card mb-4">
+  <div class="mb-3">
+    <h5 class="mb-0" style="font-family: 'Montserrat', sans-serif; color: #2d3748;"><i class="fas fa-search admin-icon mr-2" style="color: #4ecdc4;"></i>Search Users</h5>
+  </div>
+  <form method="get" class="admin-form mb-3">
+    <div class="form-row">
+      <div class="col-md-8">
+        <input type="text" name="q" value="{{ query }}" class="form-control" placeholder="Search by email" style="border-radius: 10px; border: 2px solid rgba(0,0,0,0.1); padding: 12px 15px;">
+      </div>
+      <div class="col-md-4">
+        <button class="admin-btn mr-2" style="background: linear-gradient(135deg, #4ecdc4, #44a08d); color: white;">Search</button>
+        {% if query %}
+          <a href="{% url 'admin_users' %}" class="admin-btn" style="background: linear-gradient(135deg, #e2e8f0, #cbd5e0); color: #2d3748;">Clear</a>
+        {% endif %}
+      </div>
+    </div>
+  </form>
+  <div class="admin-table-responsive">
+    <table class="admin-table table">
+      <thead>
+        <tr>
+          <th style="font-family: 'Montserrat', sans-serif; font-weight: 600; color: #2d3748;">Email</th>
+          <th style="font-family: 'Montserrat', sans-serif; font-weight: 600; color: #2d3748;">Role</th>
+          <th style="font-family: 'Montserrat', sans-serif; font-weight: 600; color: #2d3748;">Date Joined</th>
+          <th style="font-family: 'Montserrat', sans-serif; font-weight: 600; color: #2d3748;">Last Login</th>
+          <th style="font-family: 'Montserrat', sans-serif; font-weight: 600; color: #2d3748;">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for user in users %}
+          <tr>
+            <td style="font-family: 'Poppins', sans-serif; color: #2d3748;">{{ user.email }}</td>
+            <td>
+              <span class="badge" style="background: linear-gradient(135deg, #667eea, #764ba2); color: white; font-family: 'Poppins', sans-serif;">{{ user.profile.role|default:"-" }}</span>
+            </td>
+            <td style="font-family: 'Poppins', sans-serif; color: #4a5568;">{{ user.date_joined|date:"Y-m-d" }}</td>
+            <td style="font-family: 'Poppins', sans-serif; color: #4a5568;">{% if user.last_login %}{{ user.last_login|date:"Y-m-d" }}{% else %}-{% endif %}</td>
+          </tr>
+        {% empty %}
+          <tr>
+            <td colspan="4" class="text-center" style="font-family: 'Poppins', sans-serif; color: #a0aec0;">No users found.</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}
+

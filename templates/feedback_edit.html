@@ -1,0 +1,414 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<style>
+    /* Light Background */
+    body {
+        background: #ffffff !important;
+        min-height: 100vh;
+        margin: 0;
+        padding: 0;
+    }
+
+    /* Keyframe Animations */
+    @keyframes slideInUp {
+        from {
+            opacity: 0;
+            transform: translateY(50px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    @keyframes slideInLeft {
+        from {
+            opacity: 0;
+            transform: translateX(-50px);
+        }
+        to {
+            opacity: 1;
+            transform: translateX(0);
+        }
+    }
+
+    @keyframes fadeInScale {
+        from {
+            opacity: 0;
+            transform: scale(0.9);
+        }
+        to {
+            opacity: 1;
+            transform: scale(1);
+        }
+    }
+
+    @keyframes pulse {
+        0%, 100% {
+            transform: scale(1);
+        }
+        50% {
+            transform: scale(1.05);
+        }
+    }
+
+    .feedback-container {
+        max-width: 800px;
+        margin: 2rem auto;
+        padding: 0 20px;
+        animation: fadeInScale 1s ease-out;
+    }
+
+    .feedback-header {
+        text-align: center;
+        margin-bottom: 3rem;
+        padding: 3rem 0;
+        animation: slideInUp 1s ease-out;
+    }
+
+    .feedback-title {
+        font-family: 'Playfair Display', 'Times New Roman', serif;
+        font-size: 3rem;
+        font-weight: 700;
+        color: #000000;
+        margin-bottom: 1rem;
+        letter-spacing: 2px;
+        text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        position: relative;
+    }
+
+    .feedback-title::after {
+        content: '';
+        position: absolute;
+        bottom: -10px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 80px;
+        height: 3px;
+        background: linear-gradient(90deg, #667eea, #764ba2);
+        border-radius: 2px;
+    }
+
+    .feedback-subtitle {
+        font-size: 1.2rem;
+        color: #000000;
+        margin-bottom: 2rem;
+        font-weight: 300;
+        letter-spacing: 0.5px;
+    }
+
+    /* Edit Feedback Form Section */
+    .edit-feedback-section {
+        background: #ffffff;
+        padding: 4rem;
+        border-radius: 25px;
+        margin-bottom: 4rem;
+        border: 1px solid rgba(255,255,255,0.2);
+        box-shadow: 0 15px 50px rgba(0,0,0,0.1);
+        animation: slideInUp 1s ease-out;
+    }
+
+    .edit-feedback-title {
+        font-size: 2.2rem;
+        font-weight: 700;
+        color: #000000;
+        margin-bottom: 1rem;
+        text-align: center;
+    }
+
+    .edit-feedback-subtitle {
+        color: #000000;
+        margin-bottom: 3rem;
+        text-align: center;
+        font-size: 1.1rem;
+        font-weight: 300;
+    }
+
+    .feedback-form {
+        max-width: 700px;
+        margin: 0 auto;
+    }
+
+    .form-group {
+        margin-bottom: 2rem;
+        animation: slideInLeft 0.8s ease-out;
+        animation-fill-mode: both;
+    }
+
+    .form-group:nth-child(1) { animation-delay: 0.1s; }
+    .form-group:nth-child(2) { animation-delay: 0.2s; }
+    .form-group:nth-child(3) { animation-delay: 0.3s; }
+    .form-group:nth-child(4) { animation-delay: 0.4s; }
+
+    .form-label {
+        font-weight: 600;
+        color: #000000;
+        margin-bottom: 0.8rem;
+        display: block;
+        font-size: 1.1rem;
+        letter-spacing: 0.5px;
+    }
+
+    .form-control {
+        width: 100%;
+        padding: 1rem 1.2rem;
+        border: 2px solid rgba(255,255,255,0.3);
+        border-radius: 12px;
+        font-size: 1rem;
+        transition: all 0.3s ease;
+        font-family: inherit;
+        background: #ffffff;
+        color: #2c3e50;
+    }
+
+    .form-control:focus {
+        outline: none;
+        border-color: #667eea;
+        box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.2);
+        background: rgba(255,255,255,1);
+    }
+
+    .form-control[readonly] {
+        background-color: #f0f0f0;
+        cursor: not-allowed;
+        border-color: rgba(255,255,255,0.4);
+        color: #7f8c8d;
+    }
+
+    .form-control[readonly]:focus {
+        border-color: rgba(255,255,255,0.4);
+        box-shadow: none;
+    }
+
+    .rating-group {
+        display: flex;
+        gap: 0.5rem;
+        flex-wrap: nowrap;
+        justify-content: flex-start;
+        align-items: center;
+    }
+
+    .rating-input {
+        display: none;
+    }
+
+    .rating-label {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 50px;
+        height: 50px;
+        border: 2px solid rgba(255,255,255,0.3);
+        border-radius: 50%;
+        font-size: 1.5rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        background: #ffffff;
+        color: rgba(255,255,255,0.7);
+    }
+
+    .rating-label:hover {
+        transform: scale(1.2);
+        border-color: #f39c12;
+        background: rgba(243, 156, 18, 0.2);
+        color: #f39c12;
+        box-shadow: 0 0 20px rgba(243, 156, 18, 0.3);
+    }
+
+    .rating-input:checked + .rating-label {
+        border-color: #f39c12;
+        background: #f39c12;
+        color: white;
+        font-weight: 700;
+        transform: scale(1.3);
+        box-shadow: 0 0 25px rgba(243, 156, 18, 0.5);
+    }
+
+    .form-submit {
+        width: 100%;
+        padding: 1.2rem;
+        background: linear-gradient(45deg, #667eea, #764ba2);
+        color: white;
+        border: none;
+        border-radius: 12px;
+        font-size: 1.2rem;
+        font-weight: 700;
+        cursor: pointer;
+        transition: all 0.4s ease;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
+    }
+
+    .form-submit:hover {
+        background: linear-gradient(45deg, #764ba2, #667eea);
+        transform: translateY(-3px);
+        box-shadow: 0 12px 35px rgba(102, 126, 234, 0.4);
+    }
+
+    .back-btn {
+        display: inline-block;
+        padding: 1rem 2rem;
+        background: linear-gradient(45deg, #95a5a6, #7f8c8d);
+        color: white;
+        text-decoration: none;
+        border-radius: 10px;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        box-shadow: 0 5px 15px rgba(127, 140, 141, 0.3);
+        margin-bottom: 2rem;
+    }
+
+    .back-btn:hover {
+        background: linear-gradient(45deg, #7f8c8d, #6c7b7d);
+        text-decoration: none;
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(127, 140, 141, 0.4);
+    }
+
+    .alert {
+        padding: 1.5rem;
+        margin-bottom: 2rem;
+        border-radius: 12px;
+        border: 1px solid rgba(255,255,255,0.2);
+        animation: slideInLeft 0.8s ease-out;
+    }
+
+    .alert-success {
+        background: #28a745;
+        border-color: #28a745;
+        color: #ffffff;
+    }
+
+    .alert-error {
+        background: #dc3545;
+        border-color: #dc3545;
+        color: #ffffff;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+        .feedback-title {
+            font-size: 2.5rem;
+        }
+
+        .rating-group {
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .rating-label {
+            width: 45px;
+            height: 45px;
+            font-size: 1.2rem;
+        }
+
+        .edit-feedback-section {
+            padding: 2rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .feedback-container {
+            padding: 0 15px;
+        }
+
+        .feedback-title {
+            font-size: 2rem;
+        }
+
+        .rating-label {
+            width: 40px;
+            height: 40px;
+            font-size: 1rem;
+        }
+    }
+</style>
+
+<div class="feedback-container">
+    <!-- Header -->
+    <div class="feedback-header">
+        <h1 class="feedback-title">Edit Your Feedback</h1>
+        <p class="feedback-subtitle">Update your feedback to help us improve</p>
+    </div>
+
+    <!-- Messages -->
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert alert-{{ message.tags }}">
+                {{ message }}
+            </div>
+        {% endfor %}
+    {% endif %}
+
+    <!-- Back Button -->
+    <a href="{% url 'feedback:feedback_list' %}" class="back-btn">← Back to Feedback</a>
+
+    <!-- Edit Feedback Form Section -->
+    <section class="edit-feedback-section">
+        <h2 class="edit-feedback-title">Update Your Feedback</h2>
+        <p class="edit-feedback-subtitle">Make changes to your existing feedback</p>
+
+        <form method="post" class="feedback-form" novalidate>
+            {% csrf_token %}
+
+            <!-- Name -->
+            <div class="form-group">
+                <label class="form-label">{{ form.name.label }}</label>
+                {{ form.name }}
+                {% if form.name.errors %}
+                    <small style="color: #e74c3c;">{{ form.name.errors.0 }}</small>
+                {% endif %}
+            </div>
+
+            <!-- Email -->
+            <div class="form-group">
+                <label class="form-label">{{ form.email.label }}</label>
+                {{ form.email }}
+                {% if form.email.errors %}
+                    <small style="color: #e74c3c;">{{ form.email.errors.0 }}</small>
+                {% endif %}
+            </div>
+
+            <!-- Rating -->
+                <div class="form-group rating-container">
+                    <label class="form-label rating-label-main">{{ form.rating.label }}</label>
+                    <div class="rating-group">
+                        {% for value, label in form.rating.field.choices %}
+                            <label class="rating-option">
+                                <input type="radio" name="rating" value="{{ value }}" id="rating_{{ value }}" class="rating-input" {% if form.rating.value == value|stringformat:"s" %}checked{% endif %}>
+                                <span class="rating-stars">
+                                    {% for i in "12345" %}
+                                        {% if i|add:"0" <= value %}⭐{% else %}☆{% endif %}
+                                    {% endfor %}
+                                </span>
+                            </label>
+                        {% endfor %}
+                    </div>
+                    {% if form.rating.errors %}
+                        <small style="color: #e74c3c;">{{ form.rating.errors.0 }}</small>
+                    {% endif %}
+                </div>
+
+            <!-- Comment -->
+            <div class="form-group">
+                <label class="form-label">{{ form.comment.label }}</label>
+                {{ form.comment }}
+                {% if form.comment.errors %}
+                    <small style="color: #e74c3c;">{{ form.comment.errors.0 }}</small>
+                {% endif %}
+            </div>
+
+            <!-- Submit -->
+            <button type="submit" class="form-submit">Update Feedback</button>
+        </form>
+    </section>
+</div>
+
+{% endblock %}

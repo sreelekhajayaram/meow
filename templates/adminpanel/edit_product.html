@@ -1,0 +1,52 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="admin-hero mb-4">
+  <div>
+    <p class="eyebrow">Admin / Product</p>
+    <h2 class="text-white mb-1">Edit Product</h2>
+    <p class="text-light mb-0">{{ product.title }}</p>
+  </div>
+  <div class="d-flex align-items-center">
+    <a href="{% url 'admin_catalog' %}" class="btn btn-outline-light">Back to Catalog</a>
+  </div>
+</div>
+
+<div class="admin-card">
+  <div class="mb-3">
+    <h5 class="mb-0" style="font-family: 'Montserrat', sans-serif; color: #2d3748;"><i class="fas fa-edit admin-icon mr-2" style="color: #45b7d1;"></i>Edit Product</h5>
+  </div>
+  {% if messages %}
+    {% for message in messages %}
+      <div class="alert alert-{{ message.tags }}" style="border-radius: 10px; margin-bottom: 15px;">{{ message }}</div>
+    {% endfor %}
+  {% endif %}
+  <form method="post" enctype="multipart/form-data" class="admin-form mb-4">
+    {% csrf_token %}
+    {{ form.as_p }}
+    {{ form.errors }}
+    <div class="form-group">
+      <label for="id_images" class="form-label">Add Images</label>
+      <input type="file" name="images" id="id_images" multiple class="form-control-file" style="border-radius: 10px; border: 2px solid rgba(0,0,0,0.1); padding: 10px;">
+    </div>
+    <button class="admin-btn" style="background: linear-gradient(135deg, #45b7d1, #96ceb4); color: white;">Save Changes</button>
+    <a class="admin-btn ml-2" href="{% url 'admin_catalog' %}" style="background: linear-gradient(135deg, #e2e8f0, #cbd5e0); color: #2d3748;">Cancel</a>
+  </form>
+  <div class="mb-3">
+    <h6 style="font-family: 'Montserrat', sans-serif; color: #2d3748; margin-bottom: 15px;"><i class="fas fa-images mr-2" style="color: #4ecdc4;"></i>Existing Images</h6>
+    <div class="d-flex flex-wrap">
+      {% for img in product.images.all %}
+        <div class="mr-3 mb-3 text-center" style="border-radius: 10px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+          <img src="{{ img.image.url }}" style="width:110px;height:110px;object-fit:cover;" class="img-thumbnail" alt="">
+          <form method="post" action="{% url 'delete_product_image' img.id %}">
+            {% csrf_token %}
+            <button class="btn btn-sm btn-outline-danger btn-block mt-1" onclick="return confirm('Delete this image?')" style="border-radius: 0 0 10px 10px;">Delete</button>
+          </form>
+        </div>
+      {% empty %}
+        <div class="text-muted" style="font-family: 'Poppins', sans-serif; color: #a0aec0;">No images yet.</div>
+      {% endfor %}
+    </div>
+  </div>
+</div>
+{% endblock %}
+

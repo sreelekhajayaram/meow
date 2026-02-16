@@ -1,0 +1,61 @@
+{% extends 'base.html' %}
+{% block content %}
+<style>
+* {
+    text-shadow: none !important;
+}
+.hero-atelier h2 {
+    color: #000 !important;
+}
+.artistic-btn {
+    background: #000 !important;
+    color: white !important;
+    padding: 6px 12px;
+    border-radius: 5px;
+    text-decoration: none;
+    font-size: 0.8rem;
+    transition: background 0.3s ease, color 0.3s ease;
+
+}
+.artistic-btn:hover {
+    background: #000 !important;
+    color: white !important;
+}
+</style>
+<div class="hero-atelier mb-4">
+    <div class="row align-items-center">
+        <div class="col-12">
+            <p class="eyebrow text-light">Category</p>
+            <h2 class="text-white mb-1">{{ category.get_name_display }}</h2>
+            <p class="text-light mb-0">{{ category.description }}</p>
+        </div>
+    </div>
+</div>
+<div class="row justify-content-center">
+    {% for product in products %}
+        <div class="col-md-4 mb-4 d-flex justify-content-center">
+            <div class="card h-100 product-card">
+                {% if product.images.first %}
+                    <img class="card-img-top product-img" src="{{ product.images.first.image.url }}" alt="{{ product.title }}">
+                {% endif %}
+                <div class="card-body d-flex flex-column">
+                    <h5 class="card-title product-h">{{ product.title }}</h5>
+                    <p class="card-text text-muted p-text">{{ product.description|truncatewords:25 }}</p>
+                    {% if product.size %}
+                    <p class="card-text small text-muted">Size: {{ product.size }}</p>
+                    {% endif %}
+                    <p class="font-weight-bold">₹ {{ product.price }}</p>
+                    {% if product.stock == 0 %}
+                    <p class="small text-danger font-weight-bold">Out of Stock</p>
+                    {% else %}
+                    <p class="small text-muted">Stock: {{ product.stock }}</p>
+                    {% endif %}
+                    <a href="{% url 'product_detail' product.slug %}" class="btn btn-outline-primary mt-auto openproduct-btn">View Product</a>
+                </div>
+            </div>
+        </div>
+    {% empty %}
+        <div class="col-12 text-center">No products in this category yet.</div>
+    {% endfor %}
+</div>
+{% endblock %}

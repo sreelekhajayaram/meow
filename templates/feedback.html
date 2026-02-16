@@ -1,0 +1,763 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<style>
+    /* Light Background */
+    body {
+        background: #ffffff !important;
+        min-height: 100vh;
+        margin: 0;
+        padding: 0;
+    }
+
+    /* Keyframe Animations */
+    @keyframes slideInUp {
+        from {
+            opacity: 0;
+            transform: translateY(50px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    @keyframes slideInLeft {
+        from {
+            opacity: 0;
+            transform: translateX(-50px);
+        }
+        to {
+            opacity: 1;
+            transform: translateX(0);
+        }
+    }
+
+    @keyframes slideInRight {
+        from {
+            opacity: 0;
+            transform: translateX(50px);
+        }
+        to {
+            opacity: 1;
+            transform: translateX(0);
+        }
+    }
+
+    @keyframes fadeInScale {
+        from {
+            opacity: 0;
+            transform: scale(0.9);
+        }
+        to {
+            opacity: 1;
+            transform: scale(1);
+        }
+    }
+
+    @keyframes pulse {
+        0%, 100% {
+            transform: scale(1);
+        }
+        50% {
+            transform: scale(1.05);
+        }
+    }
+
+    .feedback-container {
+        max-width: 1200px;
+        margin: 2rem auto;
+        padding: 0 20px;
+        animation: fadeInScale 1s ease-out;
+    }
+
+    .feedback-header {
+        text-align: center;
+        margin-bottom: 4rem;
+        padding: 3rem 0;
+        animation: slideInUp 1s ease-out;
+    }
+
+    .feedback-title {
+        font-family: 'Playfair Display', 'Times New Roman', serif;
+        font-size: 4rem;
+        font-weight: 700;
+        color: #000000;
+        margin-bottom: 1rem;
+        letter-spacing: 2px;
+        text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        position: relative;
+    }
+
+    .feedback-title::after {
+        content: '';
+        position: absolute;
+        bottom: -10px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 80px;
+        height: 3px;
+        background: linear-gradient(90deg, #667eea, #764ba2);
+        border-radius: 2px;
+    }
+
+    .feedback-subtitle {
+        font-size: 1.3rem;
+        color: #000000;
+        margin-bottom: 2rem;
+        font-weight: 300;
+        letter-spacing: 0.5px;
+    }
+
+    .rating-stats {
+        display: flex;
+        justify-content: center;
+        gap: 3rem;
+        align-items: center;
+        margin-top: 2rem;
+        animation: slideInUp 1.2s ease-out;
+    }
+
+    .stat-box {
+        text-align: center;
+        padding: 2rem;
+        background: #ffffff;
+        border-radius: 20px;
+        min-width: 180px;
+        border: 1px solid rgba(255,255,255,0.2);
+        box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+        transition: all 0.3s ease;
+    }
+
+    .stat-box:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 15px 40px rgba(0,0,0,0.2);
+        animation: pulse 2s infinite;
+    }
+
+    .stat-number {
+        font-size: 2.5rem;
+        font-weight: 800;
+        color: #000000;
+        margin-bottom: 0.5rem;
+    }
+
+    .stat-label {
+        font-size: 1rem;
+        color: #000000;
+        font-weight: 500;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+
+    /* Feedbacks Display Section */
+    .feedbacks-section {
+        margin-bottom: 5rem;
+    }
+
+    .feedbacks-title {
+        font-size: 2.5rem;
+        font-weight: 700;
+        color: #000000;
+        margin-bottom: 3rem;
+        text-align: center;
+        padding-bottom: 1.5rem;
+        position: relative;
+        animation: slideInUp 1s ease-out;
+    }
+
+    .feedbacks-title::before {
+        content: '✨';
+        position: absolute;
+        left: -40px;
+        top: 50%;
+        transform: translateY(-50%);
+        font-size: 2rem;
+        animation: pulse 3s infinite;
+    }
+
+    .feedbacks-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+        gap: 2.5rem;
+        margin-bottom: 4rem;
+    }
+
+    .feedback-card {
+        background: #ffffff;
+        border-radius: 20px;
+        padding: 2.5rem;
+        box-shadow: 0 15px 50px rgba(0,0,0,0.2);
+        transition: all 0.4s ease;
+        border: 2px solid rgba(255,255,255,0.8);
+        display: flex;
+        flex-direction: column;
+        position: relative;
+        overflow: hidden;
+        animation: slideInUp 0.8s ease-out;
+        animation-fill-mode: both;
+    }
+
+    .feedback-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 4px;
+        background: linear-gradient(90deg, #667eea, #764ba2);
+    }
+
+    .feedback-card:nth-child(odd) {
+        animation-delay: 0.2s;
+    }
+
+    .feedback-card:nth-child(even) {
+        animation-delay: 0.4s;
+    }
+
+    .feedback-card:hover {
+        transform: translateY(-10px) scale(1.02);
+        box-shadow: 0 20px 60px rgba(0,0,0,0.15);
+    }
+
+    .feedback-header-inner {
+        display: flex;
+        justify-content: space-between;
+        align-items: start;
+        margin-bottom: 1.5rem;
+    }
+
+    .feedback-name {
+        font-weight: 700;
+        color: black;
+        font-size: 1.2rem;
+        margin-bottom: 0.5rem;
+    }
+
+    .feedback-rating {
+        font-size: 1.3rem;
+        color: #f39c12;
+        letter-spacing: 3px;
+        filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1));
+    }
+
+    .feedback-date {
+        font-size: 0.9rem;
+        color: black;
+        margin-bottom: 1.5rem;
+        font-weight: 500;
+    }
+
+    .feedback-comment {
+        color: black;
+        line-height: 1.7;
+        flex-grow: 1;
+        margin-bottom: 1.5rem;
+        font-size: 1rem;
+        font-style: italic;
+    }
+
+    .feedback-email {
+        font-size: 0.85rem;
+        color: black;
+        word-break: break-all;
+        font-weight: 500;
+    }
+
+    .no-feedbacks {
+        text-align: center;
+        padding: 4rem 2rem;
+        color: #000000;
+        background: #ffffff;
+        border-radius: 20px;
+        border: 1px solid rgba(255,255,255,0.2);
+        animation: fadeInScale 1s ease-out;
+    }
+
+    /* Add Feedback Form Section */
+    .add-feedback-section {
+        background: #ffffff;
+        padding: 4rem;
+        border-radius: 25px;
+        margin-bottom: 4rem;
+        border: 1px solid rgba(255,255,255,0.2);
+        box-shadow: 0 15px 50px rgba(0,0,0,0.1);
+        animation: slideInUp 1s ease-out;
+    }
+
+    .add-feedback-title {
+        font-size: 2.2rem;
+        font-weight: 700;
+        color: #000000;
+        margin-bottom: 1rem;
+        text-align: center;
+    }
+
+    .add-feedback-subtitle {
+        color: #000000;
+        margin-bottom: 3rem;
+        text-align: center;
+        font-size: 1.1rem;
+        font-weight: 300;
+    }
+
+    .feedback-form {
+        max-width: 700px;
+        margin: 0 auto;
+    }
+
+    .form-group {
+        margin-bottom: 2rem;
+        animation: slideInLeft 0.8s ease-out;
+        animation-fill-mode: both;
+    }
+
+    .form-group:nth-child(1) { animation-delay: 0.1s; }
+    .form-group:nth-child(2) { animation-delay: 0.2s; }
+    .form-group:nth-child(3) { animation-delay: 0.3s; }
+    .form-group:nth-child(4) { animation-delay: 0.4s; }
+
+    .form-label {
+        font-weight: 600;
+        color: #000000;
+        margin-bottom: 0.8rem;
+        display: block;
+        font-size: 1.1rem;
+        letter-spacing: 0.5px;
+    }
+
+    .form-control {
+        width: 100%;
+        padding: 1rem 1.2rem;
+        border: 2px solid rgba(255,255,255,0.3);
+        border-radius: 12px;
+        font-size: 1rem;
+        transition: all 0.3s ease;
+        font-family: inherit;
+        background: #ffffff;
+        color: #2c3e50;
+    }
+
+    .form-control:focus {
+        outline: none;
+        border-color: #667eea;
+        box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.2);
+        background: rgba(255,255,255,1);
+    }
+
+    .form-control[readonly] {
+        background-color: #f0f0f0;
+        cursor: not-allowed;
+        border-color: rgba(255,255,255,0.4);
+        color: #7f8c8d;
+    }
+
+    .form-control[readonly]:focus {
+        border-color: rgba(255,255,255,0.4);
+        box-shadow: none;
+    }
+
+    .your-feedback-card {
+        background: #fff9c4;
+        border-left: 4px solid #f39c12;
+        position: relative;
+        box-shadow: 0 10px 40px rgba(243, 156, 18, 0.1);
+    }
+
+    .edit-btn {
+        background: linear-gradient(45deg, #3498db, #2980b9);
+        color: white;
+        border: none;
+        border-radius: 50%;
+        width: 40px;
+        height: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        font-size: 1.2rem;
+        transition: all 0.3s ease;
+        padding: 0;
+        box-shadow: 0 4px 15px rgba(52, 152, 219, 0.3);
+    }
+
+    .edit-btn:hover {
+        background: linear-gradient(45deg, #2980b9, #21618c);
+        transform: scale(1.1);
+        box-shadow: 0 6px 20px rgba(52, 152, 219, 0.4);
+    }
+
+    .delete-btn {
+        background: linear-gradient(45deg, #e74c3c, #c0392b);
+        color: white;
+        border: none;
+        border-radius: 50%;
+        width: 40px;
+        height: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        font-size: 1.4rem;
+        transition: all 0.3s ease;
+        padding: 0;
+        box-shadow: 0 4px 15px rgba(231, 76, 60, 0.3);
+    }
+
+    .delete-btn:hover {
+        background: linear-gradient(45deg, #c0392b, #a93226);
+        transform: scale(1.1);
+        box-shadow: 0 6px 20px rgba(231, 76, 60, 0.4);
+    }
+
+    .rating-group {
+        display: flex;
+        gap: 0.5rem;
+        flex-wrap: nowrap;
+        justify-content: flex-start;
+        align-items: center;
+    }
+
+    .rating-input {
+        display: none;
+    }
+
+    .rating-label {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 50px;
+        height: 50px;
+        border: 2px solid rgba(255,255,255,0.3);
+        border-radius: 50%;
+        font-size: 1.5rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        background: #ffffff;
+        color: rgba(255,255,255,0.7);
+    }
+
+    .rating-label:hover {
+        transform: scale(1.2);
+        border-color: #f39c12;
+        background: rgba(243, 156, 18, 0.2);
+        color: #f39c12;
+        box-shadow: 0 0 20px rgba(243, 156, 18, 0.3);
+    }
+
+    .rating-input:checked + .rating-label {
+        border-color: #f39c12;
+        background: #f39c12;
+        color: white;
+        font-weight: 700;
+        transform: scale(1.3);
+        box-shadow: 0 0 25px rgba(243, 156, 18, 0.5);
+    }
+
+    .form-submit {
+        width: 100%;
+        padding: 1.2rem;
+        background: linear-gradient(45deg, #667eea, #764ba2);
+        color: white;
+        border: none;
+        border-radius: 12px;
+        font-size: 1.2rem;
+        font-weight: 700;
+        cursor: pointer;
+        transition: all 0.4s ease;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
+    }
+
+    .form-submit:hover {
+        background: linear-gradient(45deg, #764ba2, #667eea);
+        transform: translateY(-3px);
+        box-shadow: 0 12px 35px rgba(102, 126, 234, 0.4);
+    }
+
+    .login-prompt {
+        background: #ffffff;
+        border: 2px solid rgba(255,255,255,0.3);
+        border-radius: 15px;
+        padding: 3rem;
+        text-align: center;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    }
+
+    .login-prompt p {
+        color: #000000;
+        margin-bottom: 1.5rem;
+        font-size: 1.1rem;
+        font-weight: 500;
+    }
+
+    .login-btn {
+        display: inline-block;
+        padding: 1rem 2.5rem;
+        background: linear-gradient(45deg, #667eea, #764ba2);
+        color: white;
+        text-decoration: none;
+        border-radius: 10px;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+    }
+
+    .login-btn:hover {
+        background: linear-gradient(45deg, #764ba2, #667eea);
+        text-decoration: none;
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
+    }
+
+    .alert {
+        padding: 1.5rem;
+        margin-bottom: 2rem;
+        border-radius: 12px;
+        border: 1px solid rgba(255,255,255,0.2);
+        animation: slideInRight 0.8s ease-out;
+    }
+
+    .alert-success {
+        background: #28a745;
+        border-color: #28a745;
+        color: #ffffff;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+        .feedback-title {
+            font-size: 2.5rem;
+        }
+
+        .feedbacks-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .rating-stats {
+            flex-direction: column;
+            gap: 2rem;
+        }
+
+        .rating-group {
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .rating-label {
+            width: 45px;
+            height: 45px;
+            font-size: 1.2rem;
+        }
+
+        .add-feedback-section {
+            padding: 2rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .feedback-container {
+            padding: 0 15px;
+        }
+
+        .feedback-title {
+            font-size: 2rem;
+        }
+
+        .feedbacks-title {
+            font-size: 2rem;
+        }
+
+        .stat-box {
+            min-width: 140px;
+            padding: 1.5rem;
+        }
+
+        .stat-number {
+            font-size: 2rem;
+        }
+
+        .feedback-card {
+            padding: 2rem;
+        }
+
+        .rating-label {
+            width: 40px;
+            height: 40px;
+            font-size: 1rem;
+        }
+    }
+</style>
+
+<div class="feedback-container">
+    <!-- Header -->
+    <div class="feedback-header">
+        <h1 class="feedback-title">Customer Stories</h1>
+        <p class="feedback-subtitle">Hear from people who've experienced our art commissions</p>
+
+        {% if total_feedbacks > 0 %}
+        <div class="rating-stats">
+            <div class="stat-box">
+                <div class="stat-number">{{ total_feedbacks }}</div>
+                <div class="stat-label">Total Reviews</div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-number">{{ avg_rating }}</div>
+                <div class="stat-label">Average Rating</div>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+
+    <!-- Messages -->
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert alert-{{ message.tags }}">
+                {{ message }}
+            </div>
+        {% endfor %}
+    {% endif %}
+
+    <!-- Your Recent Feedback Section (for authenticated users) -->
+    {% if user.is_authenticated and user_feedbacks %}
+        <section class="feedbacks-section">
+            <h2 class="feedbacks-title">📝 Your Feedback</h2>
+            <div class="feedbacks-grid">
+                {% for feedback in user_feedbacks %}
+                    <div class="feedback-card your-feedback-card">
+                        {% if feedback.email == user.email %}
+                        <div style="display: flex; gap: 10px; position: absolute; top: 15px; right: 15px;">
+                            <button class="edit-btn" onclick="window.location.href='{% url 'feedback:edit_feedback' feedback.id %}';" title="Edit this feedback">✏️</button>
+                            <button class="delete-btn" onclick="if(confirm('Are you sure you want to delete this feedback?')) { window.location.href='{% url 'feedback:delete_feedback' feedback.id %}'; }" title="Delete this feedback">✕</button>
+                        </div>
+                        {% endif %}
+                        <div class="feedback-header-inner">
+                            <div>
+                                <div class="feedback-name">{{ feedback.name }}</div>
+                                <div class="feedback-date">{{ feedback.created_at|date:"M d, Y" }}</div>
+                            </div>
+                            <div class="feedback-rating">
+                                {% for i in "12345" %}
+                                    {% if i|add:"0" <= feedback.rating %}⭐{% else %}☆{% endif %}
+                                {% endfor %}
+                            </div>
+                        </div>
+                        <p class="feedback-comment">{{ feedback.comment }}</p>
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            {% if feedback.email %}
+                                <small class="feedback-email">{{ feedback.email }}</small>
+                            {% endif %}
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        </section>
+    {% endif %}
+
+    <!-- Feedbacks Display -->
+    <section class="feedbacks-section">
+        <h2 class="feedbacks-title">✨ What Our Customers Say</h2>
+
+        {% if feedbacks %}
+            <div class="feedbacks-grid">
+                {% for feedback in feedbacks %}
+                    <div class="feedback-card">
+                        <div class="feedback-header-inner">
+                            <div>
+                                <div class="feedback-name">{{ feedback.name }}</div>
+                                <div class="feedback-date">{{ feedback.created_at|date:"M d, Y" }}</div>
+                            </div>
+                            <div class="feedback-rating">
+                                {% for i in "12345" %}
+                                    {% if i|add:"0" <= feedback.rating %}⭐{% else %}☆{% endif %}
+                                {% endfor %}
+                            </div>
+                        </div>
+                        <p class="feedback-comment">{{ feedback.comment }}</p>
+                        {% if feedback.email %}
+                            <small class="feedback-email">{{ feedback.email }}</small>
+                        {% endif %}
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="no-feedbacks">
+                <p>No reviews yet. Be the first to share your experience!</p>
+            </div>
+        {% endif %}
+    </section>
+
+    <!-- Add Feedback Section -->
+    <section class="add-feedback-section">
+        <h2 class="add-feedback-title">Share Your Experience</h2>
+        <p class="add-feedback-subtitle">Help us improve by sharing your feedback</p>
+
+        {% if user.is_authenticated %}
+            <form method="post" class="feedback-form" novalidate>
+                {% csrf_token %}
+
+                <!-- Name -->
+                <div class="form-group">
+                    <label class="form-label">{{ form.name.label }}</label>
+                    {{ form.name }}
+                    {% if form.name.errors %}
+                        <small style="color: #e74c3c;">{{ form.name.errors.0 }}</small>
+                    {% endif %}
+                </div>
+
+                <!-- Email -->
+                <div class="form-group">
+                    <label class="form-label">{{ form.email.label }}</label>
+                    {{ form.email }}
+                    {% if form.email.errors %}
+                        <small style="color: #e74c3c;">{{ form.email.errors.0 }}</small>
+                    {% endif %}
+                </div>
+
+                <!-- Rating -->
+                <div class="form-group">
+                    <label class="form-label">{{ form.rating.label }}</label>
+                    <div class="rating-group">
+                        {% for value, label in form.rating.field.choices %}
+                            <input type="radio" name="rating" value="{{ value }}" id="rating_{{ value }}" class="rating-input" {% if form.rating.value == value|stringformat:"s" %}checked{% endif %}>
+                            <label for="rating_{{ value }}" class="rating-label" title="{{ label }}">
+                                {% for i in "12345" %}
+                                    {% if i|add:"0" <= value %}⭐{% else %}☆{% endif %}
+                                {% endfor %}
+                            </label>
+                        {% endfor %}
+                    </div>
+                    {% if form.rating.errors %}
+                        <small style="color: #e74c3c;">{{ form.rating.errors.0 }}</small>
+                    {% endif %}
+                </div>
+
+                <!-- Comment -->
+                <div class="form-group">
+                    <label class="form-label">{{ form.comment.label }}</label>
+                    {{ form.comment }}
+                    {% if form.comment.errors %}
+                        <small style="color: #e74c3c;">{{ form.comment.errors.0 }}</small>
+                    {% endif %}
+                </div>
+
+                <!-- Submit -->
+                <button type="submit" class="form-submit">Submit Your Feedback</button>
+            </form>
+        {% else %}
+            <div class="login-prompt">
+                <p>Please log in to share your feedback</p>
+                <a href="{% url 'login' %}" class="login-btn">Log In</a>
+            </div>
+        {% endif %}
+    </section>
+</div>
+
+{% endblock %}
