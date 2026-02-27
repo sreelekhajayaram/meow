@@ -12,13 +12,38 @@ from booking.forms import STATE_CITY_MAP
 
 
 def home(request):
-    categories = Category.objects.all()
+    # Define custom ordering for specific categories
+    # Required order: Paintings, Mural Paintings, Stencil Artworks, Pencil Drawings, Pen Art, then others (caricature last)
+    category_order = {
+        'paintings': 1,
+        'mural': 2,
+        'stencil': 3,
+        'pencil': 4,
+        'pen_art': 5,
+        'ghibli_art': 99,  # Second to last
+        'caricature': 100,  # Last
+    }
+    
+    def get_sort_key(category):
+        """Return sort key: defined categories get explicit order, others get high order to maintain relative order"""
+        return category_order.get(category.name, 100)
+    
+    categories = sorted(Category.objects.all(), key=get_sort_key)
 
     # Handle search and category filtering
     category_slug = request.GET.get('category')
     search_query = request.GET.get('search')
 
-    # Start with base queryset
+    # Featured Gallery: Select exactly ONE product from EACH category
+    # Get the latest product from each category that has products
+    featured_products = []
+    for category in categories:
+        # Get the latest product in this category (by created_at)
+        product = category.products.order_by('-created_at').first()
+        if product:
+            featured_products.append(product)
+
+    # Start with base queryset for shop section
     products = Product.objects.order_by('-created_at')
 
     if category_slug:
@@ -34,7 +59,7 @@ def home(request):
     # Apply slice after filtering
     products = products[:6]
 
-    return render(request, 'home.html', {'products': products, 'categories': categories})
+    return render(request, 'home.html', {'products': featured_products, 'categories': categories})
 
 
 def category_view(request, slug):

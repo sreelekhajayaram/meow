@@ -239,7 +239,23 @@ class PortraitBookingForm(forms.ModelForm):
         )
 
         # Configure category field with dynamic choices from Category model
-        category_choices = [(cat.name, cat.get_name_display()) for cat in Category.objects.all()]
+        # Apply custom ordering: Paintings, Mural Paintings, Stencil Artworks, Pencil Drawings, Pen Art, then others (caricature last)
+        category_order = {
+            'paintings': 1,
+            'mural': 2,
+            'stencil': 3,
+            'pencil': 4,
+            'pen_art': 5,
+            'ghibli_art': 99,  # Second to last
+            'caricature': 100,  # Last
+        }
+        
+        def get_sort_key(cat):
+            """Return sort key: defined categories get explicit order, others get high order"""
+            return category_order.get(cat.name, 100)
+        
+        sorted_categories = sorted(Category.objects.all(), key=get_sort_key)
+        category_choices = [(cat.name, cat.get_name_display()) for cat in sorted_categories]
         self.fields['category'] = forms.ChoiceField(
             choices=[('', 'Select Category')] + category_choices,
             widget=forms.Select(attrs={
