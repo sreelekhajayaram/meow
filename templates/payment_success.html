@@ -1,15 +1,442 @@
 {% extends 'base.html' %}
+{% load static %}
+
 {% block content %}
-<div class="d-flex justify-content-center align-items-center" style="height:60vh;">
-  <div class="text-center">
-    <div style="font-size:72px;color:#28a745;">&#10004;</div>
-    <h2 class="mt-3">{{ message }}</h2>
-    <p class="text-muted">Redirecting to your dashboard...</p>
+<div class="success-page">
+  <div class="success-container">
+    <!-- Animated Success Icon -->
+    <div class="success-icon-wrapper">
+      <div class="success-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="check-icon">
+          <polyline points="20 6 9 17 4 12"></polyline>
+        </svg>
+      </div>
+      <div class="success-ring"></div>
+    </div>
+
+    <!-- Success Message -->
+    <div class="success-content">
+      <h1 class="success-title">Payment Successful!</h1>
+      <p class="success-subtitle">Thank you for your order. Your payment has been processed successfully.</p>
+    </div>
+
+    <!-- Order Details Card -->
+    <div class="order-card">
+      <div class="order-card-header">
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path>
+          <line x1="3" y1="6" x2="21" y2="6"></line>
+          <path d="M16 10a4 4 0 0 1-8 0"></path>
+        </svg>
+        <span>Booking Confirmed</span>
+      </div>
+      
+      <div class="order-card-body">
+        {% if order_id %}
+        <div class="order-id-row">
+          <span class="order-label">Order ID</span>
+          <span class="order-value">#{{ order_id }}</span>
+        </div>
+        {% endif %}
+        
+        {% if message %}
+        <div class="order-message">
+          {{ message }}
+        </div>
+        {% endif %}
+        
+        <div class="order-details">
+          <div class="detail-item">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+            <span>Processing Time: 1-2 business days</span>
+          </div>
+          <div class="detail-item">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2z"></path2 2-><polyline points="22,6 12,13 2,6"></polyline></svg>
+            <span>Confirmation email sent</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Action Buttons -->
+    <div class="action-buttons">
+      <a href="{% url 'user_dashboard' %}" class="btn-dashboard">
+        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="3" y="3" width="7" height="7"></rect>
+          <rect x="14" y="3" width="7" height="7"></rect>
+          <rect x="14" y="14" width="7" height="7"></rect>
+          <rect x="3" y="14" width="7" height="7"></rect>
+        </svg>
+        <span>Go to Dashboard</span>
+      </a>
+      <a href="{% url 'home' %}" class="btn-home">
+        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+          <polyline points="9 22 9 12 15 12 15 22"></polyline>
+        </svg>
+        <span>Back to Home</span>
+      </a>
+    </div>
+
+    <!-- Auto-redirect Notice -->
+    <p class="redirect-notice">
+      Redirecting to your dashboard in <span id="countdown">5</span> seconds...
+    </p>
   </div>
 </div>
+
+<style>
+  /* ===== PAYMENT SUCCESS PAGE - PREMIUM DESIGN ===== */
+  
+  .success-page {
+    min-height: calc(100vh - 200px);
+    padding: 3rem 1rem;
+    background: #0a0a0a;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .success-page::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: 
+      radial-gradient(ellipse at 30% 20%, rgba(74, 222, 128, 0.08) 0%, transparent 50%),
+      radial-gradient(ellipse at 70% 80%, rgba(255, 255, 255, 0.03) 0%, transparent 50%);
+    pointer-events: none;
+  }
+
+  .success-container {
+    max-width: 480px;
+    width: 100%;
+    text-align: center;
+    position: relative;
+    z-index: 1;
+  }
+
+  /* Animated Success Icon */
+  .success-icon-wrapper {
+    position: relative;
+    width: 120px;
+    height: 120px;
+    margin: 0 auto 2rem;
+  }
+
+  .success-icon {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 80px;
+    height: 80px;
+    background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    box-shadow: 0 10px 40px rgba(34, 197, 94, 0.4);
+    animation: scaleIn 0.5s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+    z-index: 2;
+  }
+
+  @keyframes scaleIn {
+    0% {
+      transform: translate(-50%, -50%) scale(0);
+      opacity: 0;
+    }
+    50% {
+      transform: translate(-50%, -50%) scale(1.1);
+    }
+    100% {
+      transform: translate(-50%, -50%) scale(1);
+      opacity: 1;
+    }
+  }
+
+  .check-icon {
+    animation: drawCheck 0.4s ease forwards 0.4s;
+    stroke-dasharray: 30;
+    stroke-dashoffset: 30;
+  }
+
+  @keyframes drawCheck {
+    to {
+      stroke-dashoffset: 0;
+    }
+  }
+
+  .success-ring {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border: 2px solid rgba(74, 222, 128, 0.3);
+    border-radius: 50%;
+    animation: ringPulse 1.5s ease-out forwards 0.6s;
+  }
+
+  @keyframes ringPulse {
+    0% {
+      transform: scale(0.8);
+      opacity: 1;
+    }
+    100% {
+      transform: scale(1.5);
+      opacity: 0;
+    }
+  }
+
+  /* Success Content */
+  .success-content {
+    margin-bottom: 2rem;
+    animation: fadeUp 0.6s ease forwards 0.3s;
+    opacity: 0;
+  }
+
+  @keyframes fadeUp {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .success-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 2.2rem;
+    font-weight: 600;
+    color: #fff;
+    margin-bottom: 0.75rem;
+    letter-spacing: -0.5px;
+  }
+
+  .success-subtitle {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 1rem;
+    color: rgba(255, 255, 255, 0.5);
+    font-weight: 300;
+    line-height: 1.6;
+  }
+
+  /* Order Card */
+  .order-card {
+    background: #111;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 16px;
+    overflow: hidden;
+    margin-bottom: 2rem;
+    animation: fadeUp 0.6s ease forwards 0.5s;
+    opacity: 0;
+    text-align: left;
+  }
+
+  .order-card-header {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 1.25rem 1.5rem;
+    background: rgba(34, 197, 94, 0.08);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    font-family: 'Montserrat', sans-serif;
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #22c55e;
+  }
+
+  .order-card-body {
+    padding: 1.5rem;
+  }
+
+  .order-id-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-bottom: 1rem;
+    margin-bottom: 1rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  }
+
+  .order-label {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 0.8rem;
+    color: rgba(255, 255, 255, 0.5);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .order-value {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #fff;
+    letter-spacing: 0.5px;
+  }
+
+  .order-message {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 0.95rem;
+    color: #fff;
+    margin-bottom: 1.25rem;
+    padding: 1rem;
+    background: rgba(255, 255, 255, 0.03);
+    border-radius: 10px;
+    border-left: 3px solid #22c55e;
+  }
+
+  .order-details {
+    display: flex;
+    flex-direction: column;
+    gap: 0.85rem;
+  }
+
+  .detail-item {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 0.8rem;
+    color: rgba(255, 255, 255, 0.5);
+  }
+
+  .detail-item svg {
+    color: rgba(255, 255, 255, 0.3);
+    flex-shrink: 0;
+  }
+
+  /* Action Buttons */
+  .action-buttons {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+    animation: fadeUp 0.6s ease forwards 0.7s;
+    opacity: 0;
+  }
+
+  .btn-dashboard,
+  .btn-home {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 1rem 1.25rem;
+    border-radius: 12px;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 0.85rem;
+    font-weight: 600;
+    text-decoration: none;
+    transition: all 0.3s ease;
+  }
+
+  .btn-dashboard {
+    background: #fff;
+    color: #0a0a0a;
+    box-shadow: 0 4px 15px rgba(255, 255, 255, 0.1);
+  }
+
+  .btn-dashboard:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(255, 255, 255, 0.2);
+  }
+
+  .btn-home {
+    background: transparent;
+    color: rgba(255, 255, 255, 0.7);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+  }
+
+  .btn-home:hover {
+    border-color: rgba(255, 255, 255, 0.3);
+    color: #fff;
+  }
+
+  /* Redirect Notice */
+  .redirect-notice {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 0.8rem;
+    color: rgba(255, 255, 255, 0.35);
+    animation: fadeUp 0.6s ease forwards 0.9s;
+    opacity: 0;
+  }
+
+  .redirect-notice span {
+    color: rgba(255, 255, 255, 0.6);
+    font-weight: 600;
+  }
+
+  /* Mobile Responsive */
+  @media (max-width: 576px) {
+    .success-page {
+      padding: 2rem 1rem;
+    }
+
+    .success-icon-wrapper {
+      width: 100px;
+      height: 100px;
+      margin-bottom: 1.5rem;
+    }
+
+    .success-icon {
+      width: 70px;
+      height: 70px;
+    }
+
+    .success-icon svg {
+      width: 32px;
+      height: 32px;
+    }
+
+    .success-title {
+      font-size: 1.75rem;
+    }
+
+    .success-subtitle {
+      font-size: 0.9rem;
+    }
+
+    .action-buttons {
+      flex-direction: column;
+    }
+
+    .btn-dashboard,
+    .btn-home {
+      width: 100%;
+    }
+  }
+</style>
+
+{% block extra_js %}
 <script>
-  setTimeout(function(){
-    window.location = "{{ redirect_url }}";
-  }, 2200);
+document.addEventListener('DOMContentLoaded', function() {
+  // Countdown timer
+  let countdown = 5;
+  const countdownElement = document.getElementById('countdown');
+  
+  const timer = setInterval(function() {
+    countdown--;
+    if (countdownElement) {
+      countdownElement.textContent = countdown;
+    }
+    if (countdown <= 0) {
+      clearInterval(timer);
+    }
+  }, 1000);
+
+  // Auto-redirect after countdown
+  setTimeout(function() {
+    window.location = "{{ redirect_url|default:'/accounts/dashboard/' }}";
+  }, 5000);
+});
 </script>
 {% endblock %}

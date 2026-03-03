@@ -8,7 +8,7 @@ import json
 
 from .forms import CheckoutForm
 from .models import CartItem, Category, Order, OrderItem, Product
-from booking.forms import STATE_CITY_MAP
+from booking.forms import INDIA_STATE_DISTRICTS
 
 
 def home(request):
@@ -116,6 +116,139 @@ def remove_cart_item(request, item_id):
 
 
 @login_required
+def buy_now_direct(request, product_id):
+    """Handle Buy Now button click - creates a temporary order for single product only"""
+    product = get_object_or_404(Product, id=product_id)
+    
+    # Check if product is in stock
+    if product.stock == 0:
+        messages.error(request, f"{product.title} is out of stock.")
+        return redirect('product_detail', slug=product.slug)
+    
+    # Get quantity from POST or GET
+    qty = int(request.POST.get('quantity', request.GET.get('quantity', 1)))
+    qty = max(1, qty)
+    
+    # Validate quantity doesn't exceed stock
+    if qty > product.stock:
+        messages.error(request, f"Only {product.stock} items available in stock.")
+        return redirect('product_detail', slug=product.slug)
+    
+    # Calculate total for this single product
+    product_total = qty * product.price
+    
+    # Store buy now data in session (NOT in cart - completely separate flow)
+    request.session['buy_now_data'] = {
+        'product_id': product.id,
+        'product_title': product.title,
+        'quantity': qty,
+        'price': float(product.price),
+        'total': float(product_total),
+    }
+    request.session['buy_now_total'] = str(product_total)
+    
+    # Clear any existing checkout data to avoid confusion
+    if 'checkout_data' in request.session:
+        del request.session['checkout_data']
+    
+    # Redirect to checkout for Buy Now flow
+    return redirect('buy_now_checkout')
+
+
+@login_required
+def buy_now_checkout(request):
+    """Checkout page specifically for Buy Now - only shows the single product"""
+    buy_now_data = request.session.get('buy_now_data')
+    
+    if not buy_now_data:
+        messages.warning(request, "No product selected for purchase.")
+        return redirect('home')
+    
+    # Get product to verify it's still available
+    try:
+        product = Product.objects.get(id=buy_now_data['product_id'])
+    except Product.DoesNotExist:
+        messages.error(request, "Product no longer available.")
+        return redirect('home')
+    
+    # Check stock again
+    if product.stock == 0:
+        messages.error(request, f"{product.title} is now out of stock.")
+        del request.session['buy_now_data']
+        return redirect('home')
+    
+    # Prepare item for display
+    item = type('obj', (object,), {
+        'product': product,
+        'quantity': buy_now_data['quantity'],
+        'line_total': buy_now_data['total']
+    })()
+    
+    subtotal = buy_now_data['total']
+    
+    initial = {
+        'name': request.user.get_full_name() or request.user.username,
+        'email': request.user.email,
+    }
+    
+    if request.method == 'POST':
+        form = CheckoutForm(request.POST, user=request.user)
+        if form.is_valid():
+            # Store checkout data with buy_now flag
+            checkout_data = form.cleaned_data
+            checkout_data['is_buy_now'] = True
+            request.session['checkout_data'] = checkout_data
+            request.session['checkout_total'] = str(subtotal)
+            return redirect('payment_portal')
+    else:
+        form = CheckoutForm(initial=initial, user=request.user)
+
+    context = {
+        'form': form,
+        'items': [item],
+        'subtotal': subtotal,
+        'is_buy_now': True,
+        'buy_now_product': buy_now_data,
+        'state_district_map': json.dumps(INDIA_STATE_DISTRICTS)
+    }
+    return render(request, 'checkout.html', context)
+
+
+def _create_order_from_buy_now(user, checkout_data, buy_now_data):
+    """Create order from Buy Now flow - only creates order for the single product"""
+    product = Product.objects.get(id=buy_now_data['product_id'])
+    
+    order = Order.objects.create(
+        user_id=user.id,
+        shipping_name=checkout_data.get('name'),
+        shipping_email=checkout_data.get('email'),
+        shipping_phone=checkout_data.get('phone'),
+        shipping_address=checkout_data.get('address'),
+        shipping_district=checkout_data.get('district'),
+        shipping_state=checkout_data.get('state'),
+        shipping_pincode=checkout_data.get('pincode'),
+        payment_status='paid',
+        order_status='pending',
+    )
+    
+    # Create only ONE order item for the Buy Now product
+    OrderItem.objects.create(
+        order=order,
+        product=product,
+        quantity=buy_now_data['quantity'],
+        price=product.price,
+    )
+    
+    # Reduce stock for the single product
+    if product.stock >= buy_now_data['quantity']:
+        product.stock -= buy_now_data['quantity']
+        product.save(update_fields=['stock'])
+    
+    order.update_totals()
+    return order
+
+
+@login_required
 def checkout(request):
     items = CartItem.objects.filter(user_id=request.user.id).select_related('product')
     if not items.exists():
@@ -146,7 +279,7 @@ def checkout(request):
         'form': form,
         'items': items,
         'subtotal': subtotal,
-        'state_city_map': json.dumps(STATE_CITY_MAP)
+        'state_district_map': json.dumps(INDIA_STATE_DISTRICTS)
     }
     return render(request, 'checkout.html', context)
 
@@ -163,6 +296,32 @@ def payment_portal(request):
         subtotal = booking.price
         return render(request, 'payment_portal.html', {'items': [], 'subtotal': subtotal, 'booking': booking})
 
+    # Check if this is a Buy Now order (single product, not cart-based)
+    buy_now_data = request.session.get('buy_now_data')
+    if buy_now_data:
+        # This is a Buy Now flow - get only the single product
+        try:
+            product = Product.objects.get(id=buy_now_data['product_id'])
+            item = type('obj', (object,), {
+                'product': product,
+                'quantity': buy_now_data['quantity'],
+                'line_total': buy_now_data['total']
+            })()
+            subtotal = buy_now_data['total']
+            checkout_data = request.session.get('checkout_data')
+            if not checkout_data:
+                return redirect('buy_now_checkout')
+            return render(request, 'payment_portal.html', {
+                'items': [item], 
+                'subtotal': subtotal,
+                'is_buy_now': True,
+                'buy_now_product': buy_now_data
+            })
+        except Product.DoesNotExist:
+            messages.error(request, "Product no longer available.")
+            return redirect('home')
+
+    # Regular cart-based checkout
     items = CartItem.objects.filter(user_id=request.user.id).select_related('product')
     if not items.exists():
         messages.warning(request, "Your cart is empty.")
@@ -194,7 +353,7 @@ def _create_order_from_cart(user, checkout_data):
         shipping_email=checkout_data.get('email'),
         shipping_phone=checkout_data.get('phone'),
         shipping_address=checkout_data.get('address'),
-        shipping_city=checkout_data.get('city'),
+        shipping_district=checkout_data.get('district'),
         shipping_state=checkout_data.get('state'),
         shipping_pincode=checkout_data.get('pincode'),
         payment_status='paid',
@@ -220,9 +379,12 @@ def _create_order_from_cart(user, checkout_data):
 def simulate_success(request):
     checkout_data = request.session.get('checkout_data')
     booking_id = request.session.get('booking_pending')
+    buy_now_data = request.session.get('buy_now_data')
     user = request.user
     # Force evaluation of lazy proxy by accessing .id early
     user_id = user.id
+    
+    # Handle Portrait Booking payment
     if booking_id:
         from booking.models import PortraitBooking
         booking = PortraitBooking.objects.filter(id=booking_id, user_id=user_id).first()
@@ -231,6 +393,18 @@ def simulate_success(request):
             booking.save(update_fields=['booking_status'])
             request.session.pop('booking_pending', None)
             return redirect('booking_success', booking_id=booking.id)
+    
+    # Handle Buy Now order (single product, not cart-based)
+    if buy_now_data and checkout_data and checkout_data.get('is_buy_now'):
+        order = _create_order_from_buy_now(request.user, checkout_data, buy_now_data)
+        # Clear all session data
+        request.session.pop('checkout_data', None)
+        request.session.pop('checkout_total', None)
+        request.session.pop('buy_now_data', None)
+        request.session.pop('buy_now_total', None)
+        return redirect('order_success', order_id=order.id)
+    
+    # Handle regular cart-based order
     if not checkout_data:
         return redirect('checkout')
     order = _create_order_from_cart(request.user, checkout_data)

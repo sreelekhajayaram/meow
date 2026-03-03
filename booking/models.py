@@ -13,7 +13,7 @@ class PortraitBooking(models.Model):
     email = models.EmailField(max_length=254)
     phone = models.CharField(max_length=20)
     address = models.TextField()
-    city = models.CharField(max_length=120)
+    district = models.CharField(max_length=120)
     state = models.CharField(max_length=120)
     pincode = models.CharField(max_length=15)
     # Categories for portrait booking (keeps stored value simple)
@@ -56,7 +56,3 @@ class Size(models.Model):
 
     def __str__(self):
         return f"{self.name} ({self.dimensions})"
-
-
-
-

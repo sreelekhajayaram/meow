@@ -1,0 +1,519 @@
+{% extends "base.html" %}
+
+{% block title %}Book Your Portrait - ArtOfSree{% endblock %}
+
+{% block extra_css %}
+<style>
+    .booking-step {
+        padding: 2rem;
+        background: white;
+        border-radius: 15px;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+        margin-bottom: 2rem;
+    }
+    
+    .step-header {
+        display: flex;
+        align-items: center;
+        margin-bottom: 1.5rem;
+    }
+    
+    .step-number {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background: var(--primary-gold);
+        color: var(--primary-dark);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 700;
+        margin-right: 1rem;
+    }
+    
+    .filter-btn {
+        padding: 1rem;
+        border: 2px solid #ddd;
+        border-radius: 10px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        text-align: center;
+    }
+    
+    .filter-btn:hover, .filter-btn.active {
+        border-color: var(--primary-gold);
+        background: rgba(201, 162, 39, 0.1);
+    }
+    
+    .filter-btn i {
+        font-size: 2rem;
+        margin-bottom: 0.5rem;
+        color: #666;
+    }
+    
+    .filter-btn.active i {
+        color: var(--primary-gold);
+    }
+    
+    .preview-container {
+        background: #f8f9fa;
+        border-radius: 10px;
+        padding: 1rem;
+        min-height: 300px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    
+    .preview-container img {
+        max-width: 100%;
+        max-height: 400px;
+        border-radius: 10px;
+    }
+    
+    .price-display {
+        background: linear-gradient(135deg, var(--primary-dark) 0%, var(--secondary-dark) 100%);
+        color: white;
+        padding: 2rem;
+        border-radius: 15px;
+        text-align: center;
+    }
+    
+    .price-amount {
+        font-size: 3rem;
+        font-weight: 700;
+        color: var(--primary-gold);
+    }
+    
+    .delivery-info {
+        font-size: 1.25rem;
+        opacity: 0.9;
+    }
+    
+    .form-control:focus {
+        border-color: var(--primary-gold);
+        box-shadow: 0 0 0 0.2rem rgba(201, 162, 39, 0.25);
+    }
+    
+    .loader-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0,0,0,0.7);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 9999;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<section class="py-5">
+    <div class="container">
+        <div class="row">
+            <div class="col-12 text-center mb-5">
+                <h2 class="section-header">Book Your Portrait</h2>
+                <p class="text-muted">Transform your photo into a stunning artwork with AI-powered filters</p>
+            </div>
+        </div>
+
+        <form id="bookingForm">
+            <!-- Step 1: Upload Photo -->
+            <div class="booking-step" id="step1">
+                <div class="step-header">
+                    <span class="step-number">1</span>
+                    <h4 class="mb-0">Upload Your Photo</h4>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label for="photoUpload" class="form-label">Choose a photo</label>
+                            <input type="file" class="form-control" id="photoUpload" accept="image/*" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="numFaces" class="form-label">Number of Faces</label>
+                            <select class="form-select" id="numFaces">
+                                <option value="1">1 Person</option>
+                                <option value="2">2 People</option>
+                                <option value="3">3 People</option>
+                                <option value="4">4+ People</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="preview-container" id="uploadPreview">
+                            <p class="text-muted">No image uploaded yet</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="text-end mt-3">
+                    <button type="button" class="btn btn-gold" onclick="goToStep(2)">Next: Choose Filter <i class="fas fa-arrow-right ms-2"></i></button>
+                </div>
+            </div>
+
+            <!-- Step 2: Choose Filter -->
+            <div class="booking-step" id="step2">
+                <div class="step-header">
+                    <span class="step-number">2</span>
+                    <h4 class="mb-0">Choose Art Style</h4>
+                </div>
+                <div class="row mb-4">
+                    <div class="col-md-8">
+                        <div class="row">
+                            <div class="col-3">
+                                <div class="filter-btn active" data-filter="realistic" onclick="selectFilter('realistic')">
+                                    <i class="fas fa-image"></i>
+                                    <div>Realistic</div>
+                                </div>
+                            </div>
+                            <div class="col-3">
+                                <div class="filter-btn" data-filter="pencil" onclick="selectFilter('pencil')">
+                                    <i class="fas fa-pencil-alt"></i>
+                                    <div>Pencil Sketch</div>
+                                </div>
+                            </div>
+                            <div class="col-3">
+                                <div class="filter-btn" data-filter="caricature" onclick="selectFilter('caricature')">
+                                    <i class="fas fa-laugh-beam"></i>
+                                    <div>Caricature</div>
+                                </div>
+                            </div>
+                            <div class="col-3">
+                                <div class="filter-btn" data-filter="stencil" onclick="selectFilter('stencil')">
+                                    <i class="fas fa-square-full"></i>
+                                    <div>Stencil</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="preview-container" id="filterPreview">
+                            <p class="text-muted">Upload an image to see preview</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="text-end mt-3">
+                    <button type="button" class="btn btn-outline-dark me-2" onclick="goToStep(1)"><i class="fas fa-arrow-left me-2"></i>Back</button>
+                    <button type="button" class="btn btn-gold" onclick="goToStep(3)">Next: Customize <i class="fas fa-arrow-right ms-2"></i></button>
+                </div>
+            </div>
+
+            <!-- Step 3: Customize -->
+            <div class="booking-step" id="step3">
+                <div class="step-header">
+                    <span class="step-number">3</span>
+                    <h4 class="mb-0">Customize Your Order</h4>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label for="category" class="form-label">Art Category</label>
+                            <select class="form-select" id="category" required>
+                                <option value="painting">Painting</option>
+                                <option value="pencil">Pencil Drawing</option>
+                                <option value="caricature">Caricature</option>
+                                <option value="stencil">Stencil Art</option>
+                                <option value="mural">Kerala Mural</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="canvasSize" class="form-label">Canvas Size</label>
+                            <select class="form-select" id="canvasSize">
+                                <option value="1">Small (8x10 inches)</option>
+                                <option value="2" selected>Medium (12x16 inches)</option>
+                                <option value="3">Large (18x24 inches)</option>
+                                <option value="4">Extra Large (24x36 inches)</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="detailLevel" class="form-label">Detail Level</label>
+                            <select class="form-select" id="detailLevel">
+                                <option value="1">Basic</option>
+                                <option value="2" selected>Standard</option>
+                                <option value="3">High</option>
+                                <option value="4">Ultra Detailed</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="price-display">
+                            <h5>Estimated Price</h5>
+                            <div class="price-amount" id="priceDisplay">₹0</div>
+                            <p class="delivery-info"><i class="fas fa-truck me-2"></i>Delivery: <span id="deliveryDays">0</span> days</p>
+                            <p class="text-muted small">*Final price may vary based on complexity</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="text-end mt-3">
+                    <button type="button" class="btn btn-outline-dark me-2" onclick="goToStep(2)"><i class="fas fa-arrow-left me-2"></i>Back</button>
+                    <button type="button" class="btn btn-gold" onclick="goToStep(4)">Next: Confirm <i class="fas fa-arrow-right ms-2"></i></button>
+                </div>
+            </div>
+
+            <!-- Step 4: Confirm Order -->
+            <div class="booking-step" id="step4">
+                <div class="step-header">
+                    <span class="step-number">4</span>
+                    <h4 class="mb-0">Confirm Your Order</h4>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label for="customerName" class="form-label">Full Name</label>
+                            <input type="text" class="form-control" id="customerName" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="customerEmail" class="form-label">Email Address</label>
+                            <input type="email" class="form-control" id="customerEmail" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="customerPhone" class="form-label">Phone Number</label>
+                            <input type="tel" class="form-control" id="customerPhone" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="customerAddress" class="form-label">Delivery Address</label>
+                            <textarea class="form-control" id="customerAddress" rows="3" required></textarea>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="card">
+                            <div class="card-header bg-primary text-white">
+                                <h5 class="mb-0">Order Summary</h5>
+                            </div>
+                            <div class="card-body">
+                                <p><strong>Category:</strong> <span id="summaryCategory">-</span></p>
+                                <p><strong>Canvas Size:</strong> <span id="summaryCanvas">-</span></p>
+                                <p><strong>Detail Level:</strong> <span id="summaryDetail">-</span></p>
+                                <p><strong>Art Style:</strong> <span id="summaryFilter">-</span></p>
+                                <hr>
+                                <p class="mb-1"><strong>Estimated Price:</strong></p>
+                                <h3 class="text-primary" id="summaryPrice">₹0</h3>
+                                <p class="text-muted small"><i class="fas fa-clock me-1"></i> Estimated delivery: <span id="summaryDelivery">0</span> days</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="text-end mt-3">
+                    <button type="button" class="btn btn-outline-dark me-2" onclick="goToStep(3)"><i class="fas fa-arrow-left me-2"></i>Back</button>
+                    <button type="submit" class="btn btn-gold btn-lg"><i class="fas fa-check me-2"></i>Confirm Order</button>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <!-- Loading Overlay -->
+    <div class="loader-overlay" id="loader" style="display: none;">
+        <div class="text-center text-white">
+            <div class="loader"></div>
+            <p>Processing your image...</p>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+let currentStep = 1;
+let selectedFilter = 'realistic';
+let uploadedImage = null;
+let basePrice = 0;
+let finalPrice = 0;
+let deliveryDays = 0;
+
+// Handle photo upload
+$('#photoUpload').change(function(e) {
+    const file = e.target.files[0];
+    if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            uploadedImage = e.target.result;
+            $('#uploadPreview').html(`<img src="${uploadedImage}" alt="Preview">`);
+            applyFilter();
+            calculateBasePrice();
+        };
+        reader.readAsDataURL(file);
+    }
+});
+
+// Select filter
+function selectFilter(filter) {
+    selectedFilter = filter;
+    $('.filter-btn').removeClass('active');
+    $(`.filter-btn[data-filter="${filter}"]`).addClass('active');
+    if (uploadedImage) {
+        applyFilter();
+    }
+}
+
+// Apply filter via API
+function applyFilter() {
+    if (!uploadedImage) return;
+    
+    $('#loader').show();
+    
+    const formData = new FormData();
+    const blob = dataURLtoBlob(uploadedImage);
+    formData.append('image', blob, 'photo.jpg');
+    formData.append('filter', selectedFilter);
+    
+    $.ajax({
+        url: '/api/preview',
+        method: 'POST',
+        data: formData,
+        processData: false,
+        contentType: false,
+        success: function(response) {
+            if (response.success) {
+                $('#filterPreview').html(`<img src="${response.image}" alt="Filtered Preview">`);
+            }
+        },
+        error: function() {
+            alert('Error applying filter. Please try again.');
+        },
+        complete: function() {
+            $('#loader').hide();
+        }
+    });
+}
+
+// Calculate base price via ZLR
+function calculateBasePrice() {
+    if (!uploadedImage) return;
+    
+    $.ajax({
+        url: '/api/base-price',
+        method: 'POST',
+        contentType: 'application/json',
+        data: JSON.stringify({ image_data: uploadedImage }),
+        success: function(response) {
+            if (response.success) {
+                basePrice = response.base_price;
+                calculateFinalPrice();
+            }
+        }
+    });
+}
+
+// Calculate final price via MLR
+function calculateFinalPrice() {
+    const numFaces = parseInt($('#numFaces').val());
+    const category = $('#category').val();
+    const canvasSize = parseInt($('#canvasSize').val());
+    const detailLevel = parseInt($('#detailLevel').val());
+    
+    $.ajax({
+        url: '/api/final-price',
+        method: 'POST',
+        contentType: 'application/json',
+        data: JSON.stringify({
+            num_faces: numFaces,
+            category: category,
+            canvas_size: canvasSize,
+            detail_level: detailLevel
+        }),
+        success: function(response) {
+            if (response.success) {
+                finalPrice = response.final_price;
+                deliveryDays = response.delivery_days;
+                
+                $('#priceDisplay').text(`₹${finalPrice}`);
+                $('#deliveryDays').text(deliveryDays);
+                
+                updateSummary();
+            }
+        }
+    });
+}
+
+// Update order summary
+function updateSummary() {
+    const canvasSizes = ['Small', 'Medium', 'Large', 'Extra Large'];
+    const detailLevels = ['Basic', 'Standard', 'High', 'Ultra Detailed'];
+    
+    $('#summaryCategory').text($('#category option:selected').text());
+    $('#summaryCanvas').text(canvasSizes[$('#canvasSize').val() - 1]);
+    $('#summaryDetail').text(detailLevels[$('#detailLevel').val() - 1]);
+    $('#summaryFilter').text(selectedFilter.charAt(0).toUpperCase() + selectedFilter.slice(1));
+    $('#summaryPrice').text(`₹${finalPrice}`);
+    $('#summaryDelivery').text(deliveryDays);
+}
+
+// Navigate between steps
+function goToStep(step) {
+    if (step === 3) {
+        calculateFinalPrice();
+    }
+    if (step === 4) {
+        updateSummary();
+    }
+    
+    $('#step' + currentStep).hide();
+    $('#step' + step).fadeIn();
+    currentStep = step;
+    
+    // Scroll to top of current step
+    $('html, body').animate({
+        scrollTop: $('#step' + step).offset().top - 100
+    }, 500);
+}
+
+// Handle category and options changes
+$('#category, #canvasSize, #detailLevel').change(function() {
+    if (basePrice > 0) {
+        calculateFinalPrice();
+    }
+});
+
+// Handle form submission
+$('#bookingForm').submit(function(e) {
+    e.preventDefault();
+    
+    $('#loader').show();
+    
+    const orderData = {
+        name: $('#customerName').val(),
+        email: $('#customerEmail').val(),
+        phone: $('#customerPhone').val(),
+        address: $('#customerAddress').val(),
+        category: $('#category').val(),
+        canvas_size: $('#canvasSize').val(),
+        detail_level: $('#detailLevel').val(),
+        filter: selectedFilter,
+        price: finalPrice,
+        delivery_days: deliveryDays
+    };
+    
+    $.ajax({
+        url: '/api/confirm-order',
+        method: 'POST',
+        contentType: 'application/json',
+        data: JSON.stringify(orderData),
+        success: function(response) {
+            if (response.success) {
+                alert('Order confirmed! Order ID: ' + response.order.order_id);
+                window.location.href = '/';
+            }
+        },
+        error: function() {
+            alert('Error confirming order. Please try again.');
+        },
+        complete: function() {
+            $('#loader').hide();
+        }
+    });
+});
+
+// Helper function to convert data URL to blob
+function dataURLtoBlob(dataurl) {
+    var arr = dataurl.split(','), mime = arr[0].match(/:(.*?);/)[1],
+        bstr = atob(arr[1]), n = bstr.length, u8arr = new Uint8Array(n);
+    while(n--){
+        u8arr[n] = bstr.charCodeAt(n);
+    }
+    return new Blob([u8arr], {type:mime});
+}
+</script>
+{% endblock %}

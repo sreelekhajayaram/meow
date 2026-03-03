@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+
+{% block title %}{{ artwork.title }} - ArtOfSree{% endblock %}
+
+{% block content %}
+<section class="py-5">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-6">
+                <img src="/static/images/{{ artwork.image }}" alt="{{ artwork.title }}" class="img-fluid rounded shadow">
+            </div>
+            <div class="col-md-6">
+                <h1 class="mb-3">{{ artwork.title }}</h1>
+                <p class="text-muted mb-3">{{ artwork.category }}</p>
+                <h3 class="price-tag mb-4">₹{{ artwork.price }}</h3>
+                <p class="mb-4">{{ artwork.description }}</p>
+
+                <div class="mb-4">
+                    <h5>Artwork Details</h5>
+                    <ul class="list-unstyled">
+                        <li><strong>Category:</strong> {{ artwork.category }}</li>
+                        <li><strong>Price:</strong> ₹{{ artwork.price }}</li>
+                        <li><strong>Views:</strong> {{ artwork.views }}</li>
+                        <li><strong>Upload Date:</strong> {{ artwork.upload_date }}</li>
+                        <li><strong>Popularity Score:</strong> {{ artwork.popularity_score|floatformat:1 }}</li>
+                    </ul>
+                </div>
+
+                <button class="btn btn-gold btn-lg me-3">Add to Cart</button>
+                <button class="btn btn-outline-dark btn-lg">Share</button>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

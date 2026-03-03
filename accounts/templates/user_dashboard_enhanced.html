@@ -4,27 +4,34 @@
 <style>
 	@import url('https://fonts.googleapis.com/css2?family=Great+Vibes:wght@400&family=Playfair+Display:wght@600;700&family=Lora:wght@400;500;600&display=swap');
 
-	/* Black & White Theme - Matching About Page */
+	/* Maroon Theme */
+	:root {
+		--maroon-primary: #800020;
+		--maroon-dark: #5a0016;
+		--maroon-light: #a3182d;
+		--maroon-gold: #c9a227;
+	}
+
 	.dashboard-container {
 		max-width: 1400px;
 		margin: 0 auto;
 		padding: 3rem 1rem;
-		background: #000;
+		background: linear-gradient(135deg, #1a0a0a 0%, #0d0505 100%);
 		min-height: 100vh;
 		position: relative;
 	}
 
-	/* Elegant Black & White Header */
+	/* Elegant Maroon Header */
 	.dashboard-header {
-		background: #111;
+		background: linear-gradient(135deg, var(--maroon-primary) 0%, var(--maroon-dark) 100%);
 		color: #fff;
 		padding: 3rem 2rem;
-		border-radius: 10px;
+		border-radius: 15px;
 		margin-bottom: 3rem;
-		box-shadow: 0 10px 40px rgba(255, 255, 255, 0.05);
+		box-shadow: 0 10px 40px rgba(128, 0, 32, 0.3);
 		position: relative;
 		overflow: hidden;
-		border: 1px solid #333;
+		border: 1px solid var(--maroon-light);
 	}
 
 	.dashboard-header::before {
@@ -34,7 +41,7 @@
 		left: 0;
 		right: 0;
 		bottom: 0;
-		background: radial-gradient(circle at top right, rgba(255,255,255,0.03) 0%, transparent 50%);
+		background: radial-gradient(circle at top right, rgba(255,255,255,0.1) 0%, transparent 50%);
 	}
 
 	.dashboard-header h1 {
@@ -56,7 +63,7 @@
 		position: relative;
 		z-index: 2;
 		font-style: italic;
-		color: #ccc;
+		color: #f0d0d6;
 	}
 
 	/* User Info Section */
@@ -66,7 +73,7 @@
 		gap: 2rem;
 		margin-top: 2rem;
 		padding-top: 2rem;
-		border-top: 1px solid #333;
+		border-top: 1px solid rgba(255,255,255,0.2);
 		position: relative;
 		z-index: 2;
 	}
@@ -75,8 +82,8 @@
 		width: 90px;
 		height: 90px;
 		border-radius: 50%;
-		background: #222;
-		border: 3px solid #fff;
+		background: linear-gradient(135deg, var(--maroon-light) 0%, var(--maroon-dark) 100%);
+		border: 3px solid var(--maroon-gold);
 		display: flex;
 		align-items: center;
 		justify-content: center;
@@ -89,7 +96,7 @@
 
 	.user-avatar:hover {
 		transform: scale(1.05);
-		box-shadow: 0 8px 25px rgba(255, 255, 255, 0.1);
+		box-shadow: 0 8px 25px rgba(201, 162, 39, 0.3);
 	}
 
 	.user-details h3 {
@@ -105,10 +112,10 @@
 		opacity: 0.8;
 		font-size: 1.1rem;
 		font-family: 'Lora', serif;
-		color: #aaa;
+		color: #e0b0ba;
 	}
 
-	/* Stats Section - Black & White */
+	/* Stats Section - Maroon Theme */
 	.stats-section {
 		display: grid;
 		grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
@@ -117,27 +124,26 @@
 	}
 
 	.stat-card {
-		background: #111;
+		background: linear-gradient(135deg, #1a0a0a 0%, #2d1015 100%);
 		border-radius: 15px;
 		padding: 3rem 2.5rem;
 		text-align: center;
-		box-shadow: 0 5px 20px rgba(255, 255, 255, 0.03);
+		box-shadow: 0 5px 20px rgba(128, 0, 32, 0.2);
 		transition: all 0.3s ease;
-		border: 1px solid #222;
+		border: 1px solid rgba(128, 0, 32, 0.5);
 		position: relative;
 		overflow: hidden;
 	}
 
 	.stat-card:hover {
 		transform: translateY(-5px);
-		box-shadow: 0 10px 30px rgba(255, 255, 255, 0.05);
-		border-color: #444;
+		box-shadow: 0 10px 30px rgba(128, 0, 32, 0.3);
+		border-color: var(--maroon-light);
 	}
 
-	.stat-card:nth-child(1) { border-top: 3px solid #fff; }
-	.stat-card:nth-child(2) { border-top: 3px solid #ccc; }
-	.stat-card:nth-child(3) { border-top: 3px solid #999; }
-	.stat-card:nth-child(4) { border-top: 3px solid #666; }
+	.stat-card:nth-child(1) { border-top: 3px solid var(--maroon-gold); }
+	.stat-card:nth-child(2) { border-top: 3px solid var(--maroon-light); }
+	.stat-card:nth-child(3) { border-top: 3px solid var(--maroon-primary); }
 
 	.stat-number {
 		font-family: 'Playfair Display', serif;
@@ -149,7 +155,7 @@
 	}
 
 	.stat-label {
-		color: #888;
+		color: #c9a227;
 		font-size: 1.1rem;
 		margin-top: 0.5rem;
 		font-family: 'Lora', serif;
@@ -158,7 +164,7 @@
 		font-weight: 500;
 	}
 
-	/* Section Titles - Black & White with Great Vibes */
+	/* Section Titles - Maroon with Great Vibes */
 	.section-title {
 		font-family: 'Great Vibes', cursive;
 		font-size: 3rem;
@@ -166,7 +172,7 @@
 		color: #fff;
 		margin-bottom: 3rem;
 		padding-bottom: 1rem;
-		border-bottom: 2px solid #333;
+		border-bottom: 2px solid var(--maroon-primary);
 		display: inline-block;
 		position: relative;
 	}
@@ -178,10 +184,10 @@
 		gap: 2rem;
 	}
 
-	/* Item Cards - Black & White */
+	/* Item Cards - Maroon Theme */
 	.item-card {
-		background: #111;
-		border: 1px solid #222;
+		background: linear-gradient(135deg, #1a0a0a 0%, #2d1015 100%);
+		border: 1px solid rgba(128, 0, 32, 0.5);
 		border-radius: 15px;
 		padding: 2rem;
 		transition: all 0.3s ease;
@@ -192,8 +198,8 @@
 
 	.item-card:hover {
 		transform: translateY(-5px);
-		box-shadow: 0 10px 30px rgba(255, 255, 255, 0.05);
-		border-color: #444;
+		box-shadow: 0 10px 30px rgba(128, 0, 32, 0.3);
+		border-color: var(--maroon-light);
 	}
 
 	.item-card::before {
@@ -203,7 +209,7 @@
 		left: 0;
 		width: 100%;
 		height: 3px;
-		background: #fff;
+		background: linear-gradient(90deg, var(--maroon-primary), var(--maroon-gold));
 		transform: scaleX(0);
 		transition: transform 0.3s ease;
 	}
@@ -219,22 +225,22 @@
 		align-items: flex-start;
 		margin-bottom: 1.5rem;
 		padding-bottom: 1rem;
-		border-bottom: 1px solid #222;
+		border-bottom: 1px solid rgba(128, 0, 32, 0.3);
 	}
 
 	.item-id {
 		font-size: 0.9rem;
-		color: #666;
+		color: #c9a227;
 		text-transform: uppercase;
 		letter-spacing: 1px;
 		font-weight: 600;
 		font-family: 'Lora', serif;
 		padding: 0.3rem 0.8rem;
-		background: #1a1a1a;
+		background: rgba(128, 0, 32, 0.3);
 		border-radius: 5px;
 	}
 
-	/* Black & White Status Badges */
+	/* Maroon Status Badges */
 	.status-badge {
 		display: inline-block;
 		padding: 0.5rem 1rem;
@@ -248,26 +254,26 @@
 	}
 
 	.status-pending {
-		background: #222;
+		background: rgba(128, 0, 32, 0.3);
 		color: #fff;
-		border: 1px solid #444;
+		border: 1px solid var(--maroon-light);
 	}
 
 	.status-confirmed {
-		background: #fff;
-		color: #000;
-		border: 1px solid #fff;
+		background: var(--maroon-gold);
+		color: #1a0a0a;
+		border: 1px solid var(--maroon-gold);
 	}
 
 	.status-completed {
-		background: #111;
-		color: #ccc;
-		border: 1px solid #444;
+		background: var(--maroon-primary);
+		color: #fff;
+		border: 1px solid var(--maroon-primary);
 	}
 
 	.status-cancelled {
-		background: #1a1a1a;
-		color: #666;
+		background: rgba(0, 0, 0, 0.3);
+		color: #888;
 		border: 1px solid #333;
 		text-decoration: line-through;
 	}
@@ -290,14 +296,14 @@
 	}
 
 	.meta-item {
-		background: #0a0a0a;
+		background: rgba(128, 0, 32, 0.15);
 		padding: 0.8rem;
 		border-radius: 8px;
-		border-left: 2px solid #333;
+		border-left: 2px solid var(--maroon-primary);
 	}
 
 	.meta-label {
-		color: #666;
+		color: #c9a227;
 		font-weight: 500;
 		text-transform: uppercase;
 		font-size: 0.75rem;
@@ -307,41 +313,41 @@
 	}
 
 	.meta-value {
-		color: #ccc;
+		color: #f0d0d6;
 		font-weight: 500;
 		font-size: 1rem;
 		font-family: 'Lora', serif;
 	}
 
-	/* Price - Black & White */
+	/* Price - Maroon */
 	.price {
 		font-family: 'Playfair Display', serif;
 		font-size: 1.8rem;
 		font-weight: 700;
-		color: #fff;
+		color: var(--maroon-gold);
 		margin-top: 1.5rem;
 		padding-top: 1.5rem;
-		border-top: 1px solid #222;
+		border-top: 1px solid rgba(128, 0, 32, 0.3);
 		text-align: center;
 	}
 
-	/* Empty State - Black & White */
+	/* Empty State - Maroon */
 	.empty-state {
 		text-align: center;
 		padding: 4rem 3rem;
-		background: #111;
+		background: linear-gradient(135deg, #1a0a0a 0%, #2d1015 100%);
 		border-radius: 15px;
-		border: 2px dashed #333;
+		border: 2px dashed var(--maroon-primary);
 	}
 
 	.empty-text {
-		color: #888;
+		color: #c9a227;
 		font-size: 1.3rem;
 		margin: 0;
 		font-family: 'Lora', serif;
 	}
 
-	/* Action Buttons - Black & White */
+	/* Action Buttons - Maroon */
 	.action-buttons {
 		display: flex;
 		gap: 1.5rem;
@@ -351,8 +357,8 @@
 	}
 
 	.btn-primary-custom {
-		background: #fff;
-		color: #000;
+		background: linear-gradient(135deg, var(--maroon-primary) 0%, var(--maroon-dark) 100%);
+		color: #fff;
 		border: none;
 		padding: 1rem 2rem;
 		border-radius: 8px;
@@ -363,17 +369,20 @@
 		display: inline-block;
 		font-size: 1rem;
 		font-family: 'Lora', serif;
+		box-shadow: 0 4px 15px rgba(128, 0, 32, 0.3);
 	}
 
 	.btn-primary-custom:hover {
-		background: #ccc;
+		background: linear-gradient(135deg, var(--maroon-light) 0%, var(--maroon-primary) 100%);
 		transform: translateY(-2px);
+		box-shadow: 0 6px 20px rgba(128, 0, 32, 0.4);
+		color: #fff;
 	}
 
 	.btn-secondary-custom {
 		background: transparent;
 		color: #fff;
-		border: 2px solid #fff;
+		border: 2px solid var(--maroon-gold);
 		padding: 0.9rem 1.9rem;
 		border-radius: 8px;
 		font-weight: 600;
@@ -386,14 +395,14 @@
 	}
 
 	.btn-secondary-custom:hover {
-		background: #fff;
-		color: #000;
+		background: var(--maroon-gold);
+		color: #1a0a0a;
 	}
 
 	.btn-danger-custom {
 		background: transparent;
-		color: #888;
-		border: 2px solid #444;
+		color: #c9a227;
+		border: 2px solid var(--maroon-primary);
 		padding: 1rem 2rem;
 		border-radius: 8px;
 		font-weight: 600;
@@ -403,7 +412,7 @@
 	}
 
 	.btn-danger-custom:hover {
-		border-color: #fff;
+		background: var(--maroon-primary);
 		color: #fff;
 	}
 
@@ -482,7 +491,7 @@
 <div class="dashboard-container">
 	<div class="dashboard-header">
 		<h1>Welcome Back</h1>
-		<p>Manage your orders, bookings, and account settings</p>
+		<p>Manage your orders and bookings</p>
 		<div class="dashboard-user-info">
 			<div class="user-avatar">{{ user.first_name|slice:":1"|upper|default:"U" }}</div>
 			<div class="user-details">
@@ -504,10 +513,6 @@
 		<div class="stat-card">
 			<div class="stat-number">₹ {{ total_spent }}</div>
 			<div class="stat-label">Total Spent</div>
-		</div>
-		<div class="stat-card">
-			<div class="stat-number">5.0</div>
-			<div class="stat-label">Average Rating</div>
 		</div>
 	</div>
 
@@ -591,10 +596,10 @@
 
 	<div class="action-buttons">
 		<a href="{% url 'home' %}" class="btn-primary-custom">Continue Shopping</a>
-		<a href="{% url 'booking' %}" class="btn-primary-custom">Book Portrait</a>
-		<a href="{% url 'feedback:feedback_list' %}" class="btn-secondary-custom">Leave Feedback</a>
+		<a href="{% url 'booking' %}" class="btn-secondary-custom">Book Portrait</a>
 		<a href="{% url 'logout' %}" class="btn-danger-custom">Logout</a>
 	</div>
 </div>
 
 {% endblock %}
+

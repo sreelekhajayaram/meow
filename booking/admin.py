@@ -11,7 +11,7 @@ class PortraitBookingAdmin(admin.ModelAdmin):
     readonly_fields = ['created_at', 'user', 'price']
     fieldsets = (
         ('User Info', {'fields': ('user', 'name', 'email', 'phone')}),
-        ('Address', {'fields': ('address', 'city', 'state', 'pincode')}),
+('Address', {'fields': ('address', 'district', 'state', 'pincode')}),
         ('Booking Details', {'fields': ('size', 'preferred_date', 'price', 'reference_image', 'description')}),
         ('Status', {'fields': ('booking_status', 'created_at')}),
     )

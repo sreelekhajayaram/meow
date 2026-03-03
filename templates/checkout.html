@@ -110,16 +110,16 @@
                             </div>
                         </div>
 
-                        <!-- City (Dynamically populated) -->
+                        <!-- District (Dynamically populated) -->
                         <div class="col-md-6 mb-4">
                             <div class="form-group">
-                                <label for="id_city" class="form-label">
-                                    {{ form.city.label }}
+                                <label for="id_district" class="form-label">
+                                    {{ form.district.label }}
                                     <span class="required-badge">*</span>
                                 </label>
-                                {{ form.city }}
-                                {% if form.city.errors %}
-                                    <div class="invalid-feedback d-block">{{ form.city.errors.0 }}</div>
+                                {{ form.district }}
+                                {% if form.district.errors %}
+                                    <div class="invalid-feedback d-block">{{ form.district.errors.0 }}</div>
                                 {% endif %}
                             </div>
                         </div>
@@ -367,56 +367,188 @@
     }
 </style>
 
-<!-- JavaScript for State-City Dependency -->
+<!-- JavaScript for State-City Dependency and Form Validation -->
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    // State-City Mapping Data
-    const stateCityMap = {{ state_city_map|safe }};
+    // State-District Mapping Data
+    const stateDistrictMap = {{ state_district_map|safe }};
 
     const stateSelect = document.getElementById('id_state');
-    const citySelect = document.getElementById('id_city');
+    const districtSelect = document.getElementById('id_district');
 
-    // Handle State Change - Populate city dropdown with cities from selected state
-    if (stateSelect && citySelect) {
+    // Handle State Change - Populate district dropdown with districts from selected state
+    if (stateSelect && districtSelect) {
         stateSelect.addEventListener('change', function() {
             const selectedState = this.value;
 
             // Clear existing options
-            citySelect.innerHTML = '<option value="">Select City</option>';
+            districtSelect.innerHTML = '<option value="">Select District</option>';
 
-            if (selectedState && stateCityMap[selectedState]) {
-                const cities = stateCityMap[selectedState];
+            if (selectedState && stateDistrictMap[selectedState]) {
+                const districts = stateDistrictMap[selectedState];
 
-                // Add cities for the selected state
-                cities.forEach(function(city) {
+                // Add districts for the selected state
+                districts.forEach(function(district) {
                     const option = document.createElement('option');
-                    option.value = city;
-                    option.textContent = city;
-                    citySelect.appendChild(option);
+                    option.value = district;
+                    option.textContent = district;
+                    districtSelect.appendChild(option);
                 });
 
-                // Enable city select
-                citySelect.disabled = false;
+                // Enable district select
+                districtSelect.disabled = false;
             } else {
-                // Disable city select if no state selected
-                citySelect.disabled = true;
+                // Disable district select if no state selected
+                districtSelect.disabled = true;
             }
         });
 
-        // Initially disable city select
-        citySelect.disabled = true;
+        // Initially disable district select
+        districtSelect.disabled = true;
     }
 
     // Form Validation
     const checkoutForm = document.querySelector('.checkout-form');
     if (checkoutForm) {
         checkoutForm.addEventListener('submit', function(e) {
-            if (!this.checkValidity()) {
+            let isValid = true;
+            
+            // Get form fields
+            const nameField = document.getElementById('id_name');
+            const emailField = document.getElementById('id_email');
+            const phoneField = document.getElementById('id_phone');
+            const addressField = document.getElementById('id_address');
+            const stateField = document.getElementById('id_state');
+            const districtField = document.getElementById('id_district');
+            const pincodeField = document.getElementById('id_pincode');
+            
+            // Clear previous error messages
+            document.querySelectorAll('.invalid-feedback').forEach(el => el.remove());
+            document.querySelectorAll('.is-invalid').forEach(el => el.classList.remove('is-invalid'));
+            
+            // Validate Name - Only alphabets allowed
+            if (nameField && nameField.value.trim()) {
+                const nameRegex = /^[a-zA-Z\s]+$/;
+                if (!nameRegex.test(nameField.value.trim())) {
+                    showError(nameField, 'Name should only contain alphabets');
+                    isValid = false;
+                }
+            }
+            
+            // Validate Phone - Exactly 10 digits
+            if (phoneField && phoneField.value.trim()) {
+                const phoneDigits = phoneField.value.replace(/\D/g, '');
+                if (phoneDigits.length !== 10) {
+                    showError(phoneField, 'Phone number must be exactly 10 digits');
+                    isValid = false;
+                }
+            }
+            
+            // Validate Email - Proper format
+            if (emailField && emailField.value.trim()) {
+                const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+                if (!emailRegex.test(emailField.value.trim())) {
+                    showError(emailField, 'Please enter a valid email address');
+                    isValid = false;
+                }
+            }
+            
+            // Validate Address - Required
+            if (addressField && !addressField.value.trim()) {
+                showError(addressField, 'Address is required');
+                isValid = false;
+            }
+            
+            // Validate State - Required
+            if (stateField && !stateField.value) {
+                showError(stateField, 'Please select a state');
+                isValid = false;
+            }
+            
+            // Validate District - Required
+            if (districtField && !districtField.value) {
+                showError(districtField, 'Please select a district');
+                isValid = false;
+            }
+            
+            // Validate PIN Code - Exactly 6 digits
+            if (pincodeField && pincodeField.value.trim()) {
+                const pincodeRegex = /^\d{6}$/;
+                if (!pincodeRegex.test(pincodeField.value.trim())) {
+                    showError(pincodeField, 'PIN code must be exactly 6 digits');
+                    isValid = false;
+                }
+            }
+            
+            if (!isValid) {
                 e.preventDefault();
                 e.stopPropagation();
             }
             this.classList.add('was-validated');
         });
+        
+        // Real-time validation on input
+        const nameField = document.getElementById('id_name');
+        const phoneField = document.getElementById('id_phone');
+        const emailField = document.getElementById('id_email');
+        
+        if (nameField) {
+            nameField.addEventListener('input', function() {
+                const nameRegex = /^[a-zA-Z\s]*$/;
+                if (this.value && !nameRegex.test(this.value)) {
+                    showError(this, 'Name should only contain alphabets');
+                } else {
+                    clearError(this);
+                }
+            });
+        }
+        
+        if (phoneField) {
+            phoneField.addEventListener('input', function() {
+                // Only allow digits
+                this.value = this.value.replace(/\D/g, '').slice(0, 10);
+                // Clear error while typing - only show on blur or submit
+                clearError(this);
+            });
+            
+            phoneField.addEventListener('blur', function() {
+                // Validate on blur - when user leaves the field
+                if (this.value.length > 0 && this.value.length !== 10) {
+                    showError(this, 'Phone must be 10 digits');
+                } else {
+                    clearError(this);
+                }
+            });
+        }
+        
+        if (emailField) {
+            emailField.addEventListener('blur', function() {
+                const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+                if (this.value && !emailRegex.test(this.value)) {
+                    showError(this, 'Please enter a valid email address');
+                } else {
+                    clearError(this);
+                }
+            });
+        }
+    }
+    
+    // Helper function to show error
+    function showError(field, message) {
+        field.classList.add('is-invalid');
+        const errorDiv = document.createElement('div');
+        errorDiv.className = 'invalid-feedback d-block';
+        errorDiv.textContent = message;
+        field.parentElement.appendChild(errorDiv);
+    }
+    
+    // Helper function to clear error
+    function clearError(field) {
+        field.classList.remove('is-invalid');
+        const errorDiv = field.parentElement.querySelector('.invalid-feedback');
+        if (errorDiv) {
+            errorDiv.remove();
+        }
     }
 });
 </script>

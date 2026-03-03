@@ -1,110 +1,1071 @@
 {% extends 'base.html' %}
-{% block content %}
-<div class="row">
-  <div class="col-lg-6 mb-3">
-    <div class="payment-card p-4">
-      <p class="eyebrow text-light">Secure Checkout</p>
-      <h3 class="mb-3">Amount Payable: ₹ {{ subtotal }}</h3>
-      <form id="paymentForm" method="post" novalidate>
-        {% csrf_token %}
-        <div class="form-group">
-          <label>Cardholder Name</label>
-          <input type="text" class="form-control" id="cardName" name="card_name" placeholder="As on card" required>
-          <div class="invalid-feedback">Enter the name on card</div>
-        </div>
-        <div class="form-group">
-          <label>Card Number</label>
-          <input type="text" class="form-control" id="cardNumber" name="card_number" maxlength="19" placeholder="XXXX XXXX XXXX XXXX" required>
-          <div class="invalid-feedback">Enter a valid 16-digit card number</div>
-        </div>
-        <div class="form-row">
-          <div class="form-group col-md-6">
-            <label>Expiry (MM/YY)</label>
-            <input type="text" class="form-control" id="cardExpiry" name="card_expiry" placeholder="08/28" maxlength="5" required>
-            <div class="invalid-feedback">Enter a valid expiry</div>
-          </div>
-          <div class="form-group col-md-6">
-            <label>CVV</label>
-            <input type="password" class="form-control" id="cardCvv" name="card_cvv" maxlength="3" placeholder="123" required>
-            <div class="invalid-feedback">3-digit CVV required</div>
-          </div>
-        </div>
+{% load static %}
 
-        <div class="d-flex">
-          <button type="submit" class="btn btn-gold mr-2" id="payNow">Pay Now</button>
-          <a class="btn btn-outline-light" href="{% url 'booking' %}">Cancel</a>
-        </div>
-      </form>
-    </div>
-  </div>
-  <div class="col-lg-6">
-    <div class="card shadow-sm">
-      <div class="card-header bg-white">
-        <strong>Portrait Booking Summary</strong>
+{% block content %}
+<div class="payment-page">
+  <div class="payment-container">
+    <!-- Header Section -->
+    <div class="payment-header">
+      <div class="secure-badge">
+        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+          <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+        </svg>
+        <span>Secure Checkout</span>
       </div>
-      <div class="card-body">
-        <p class="mb-1"><strong>{{ booking.name }}</strong></p>
-        <p class="mb-1">Email: {{ booking.email }}</p>
-        <p class="mb-1">Phone: {{ booking.phone }}</p>
-        <p class="mb-1">Artwork Size: {{ booking.get_size_display }}</p>
-        <p class="mb-1">Category: {{ booking.get_category_display }}</p>
-        {% if booking.reference_image %}
-          <p class="mb-1">Reference Image: <a href="{{ booking.reference_image.url }}" target="_blank">View Image</a></p>
-        {% endif %}
-        <p class="mb-1">{{ booking.description }}</p>
-        <hr>
-        <div class="d-flex justify-content-between">
-          <strong>Total Amount</strong>
-          <strong>₹ {{ subtotal }}</strong>
+      <h1 class="payment-title">Complete Your Order</h1>
+      <p class="payment-subtitle">Review your details and proceed with payment</p>
+    </div>
+
+    <div class="payment-content">
+      <!-- Order Summary Card -->
+      <div class="order-summary-card">
+        <div class="card-header">
+          <div class="header-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+              <circle cx="12" cy="7" r="4"></circle>
+            </svg>
+          </div>
+          <h2>Portrait Booking Summary</h2>
         </div>
-        <p class="text-muted small mb-0">This is a dummy payment page; no real charges will be made.</p>
+        <div class="card-body">
+          <!-- Booking Details -->
+          <div class="order-item">
+            <div class="item-image">
+              <div class="no-img">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+              </div>
+            </div>
+            <div class="item-details">
+              <span class="item-name">Portrait Booking</span>
+              <span class="item-description">{{ booking.name }}</span>
+            </div>
+            <span class="item-price">₹ {{ subtotal }}</span>
+          </div>
+          
+          <!-- Additional Booking Info -->
+          <div class="booking-info mt-3">
+            <div class="info-row">
+              <span class="info-label">Email:</span>
+              <span class="info-value">{{ booking.email }}</span>
+            </div>
+            <div class="info-row">
+              <span class="info-label">Phone:</span>
+              <span class="info-value">{{ booking.phone }}</span>
+            </div>
+            <div class="info-row">
+              <span class="info-label">Artwork Size:</span>
+              <span class="info-value">{{ booking.get_size_display }}</span>
+            </div>
+            <div class="info-row">
+              <span class="info-label">Category:</span>
+              <span class="info-value">{{ booking.get_category_display }}</span>
+            </div>
+            {% if booking.reference_image %}
+            <div class="info-row">
+              <span class="info-label">Reference:</span>
+              <span class="info-value"><a href="{{ booking.reference_image.url }}" target="_blank" class="text-light">View Image</a></span>
+            </div>
+            {% endif %}
+          </div>
+          
+          <div class="order-divider">
+            <span class="divider-line"></span>
+          </div>
+          
+          <div class="order-totals">
+            <div class="total-row">
+              <span>Subtotal</span>
+              <span>₹ {{ subtotal }}</span>
+            </div>
+            <div class="total-row">
+              <span>Shipping</span>
+              <span class="free-shipping">FREE</span>
+            </div>
+            <div class="total-row final-total">
+              <span>Total</span>
+              <span>₹ {{ subtotal }}</span>
+            </div>
+          </div>
+          
+          <!-- Trust Badges -->
+          <div class="trust-badges">
+            <div class="trust-badge">
+              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+              <span>Secure</span>
+            </div>
+            <div class="trust-badge">
+              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+              <span>Verified</span>
+            </div>
+            <div class="trust-badge">
+              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg>
+              <span>Guaranteed</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Payment Method Selection -->
+      <div class="payment-method-card">
+        <div class="card-header">
+          <div class="header-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect>
+              <line x1="1" y1="10" x2="23" y2="10"></line>
+            </svg>
+          </div>
+          <h2>Payment Method</h2>
+        </div>
+        <div class="card-body">
+          <form id="paymentForm" method="post" novalidate>
+            {% csrf_token %}
+            
+            <!-- Payment Method Options - Card Only (No COD for Portrait Booking) -->
+            <div class="payment-options">
+              <label class="payment-option" id="cardOptionLabel">
+                <input type="radio" name="paymentMethod" value="card" id="cardOption" checked>
+                <span class="option-radio"></span>
+                <span class="option-content">
+                  <div class="option-icon card-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect>
+                      <line x1="1" y1="10" x2="23" y2="10"></line>
+                    </svg>
+                  </div>
+                  <div class="option-text">
+                    <span class="option-label">Credit / Debit Card</span>
+                    <span class="option-sublabel">Visa, Mastercard, RuPay</span>
+                  </div>
+                </span>
+              </label>
+            </div>
+
+            <!-- Card Details -->
+            <div class="card-details active" id="cardDetails">
+              <div class="card-brands">
+                <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='25' viewBox='0 0 40 25'%3E%3Crect fill='%23172554' width='40' height='25' rx='3'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='central' text-anchor='middle' fill='white' font-size='8' font-weight='bold'%3EVISA%3C/text%3E%3C/svg%3E" alt="Visa">
+                <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='25' viewBox='0 0 40 25'%3E%3Crect fill='%23EB001B' width='20' height='25' rx='3'/%3E%3Ccircle cx='15' cy='12.5' r='8' fill='%23EB001B'/%3E%3Ccircle cx='25' cy='12.5' r='8' fill='%23F79E1B'/%3E%3Cpath d='M20 6.5c2.5 2 4 5 4 6s-1.5 4-4 6c-2.5-2-4-5-4-6s1.5-4 4-6z' fill='%23FF5F00'/%3E%3C/svg%3E" alt="Mastercard">
+                <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='25' viewBox='0 0 40 25'%3E%3Crect fill='%23e6e6e6' width='40' height='25' rx='3'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='central' text-anchor='middle' fill='%23555555' font-size='6' font-weight='bold'%3ERUPAY%3C/text%3E%3C/svg%3E" alt="RuPay">
+              </div>
+              
+              <div class="form-group">
+                <label for="cardName">Cardholder Name</label>
+                <div class="input-wrapper">
+                  <input type="text" class="form-control" id="cardName" placeholder="Name as on card">
+                  <div class="input-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+                  </div>
+                </div>
+                <div class="validation-message" id="cardNameError"></div>
+              </div>
+              
+              <div class="form-group">
+                <label for="cardNumber">Card Number</label>
+                <div class="input-wrapper">
+                  <input type="text" class="form-control" id="cardNumber" maxlength="19" placeholder="1234 5678 9012 3456">
+                  <div class="input-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect><line x1="1" y1="10" x2="23" y2="10"></line></svg>
+                  </div>
+                </div>
+                <div class="validation-message" id="cardNumberError"></div>
+              </div>
+              
+              <div class="form-row">
+                <div class="form-group col-6">
+                  <label for="cardExpiry">Expiry Date</label>
+                  <div class="input-wrapper">
+                    <input type="text" class="form-control" id="cardExpiry" placeholder="MM/YY" maxlength="5">
+                    <div class="input-icon">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+                    </div>
+                  </div>
+                  <div class="validation-message" id="cardExpiryError"></div>
+                </div>
+                <div class="form-group col-6">
+                  <label for="cardCvv">CVV</label>
+                  <div class="input-wrapper">
+                    <input type="password" class="form-control" id="cardCvv" maxlength="3" placeholder="•••">
+                    <div class="input-icon">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+                    </div>
+                  </div>
+                  <div class="validation-message" id="cardCvvError"></div>
+                </div>
+              </div>
+              
+              <div class="secure-notice">
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+                <span>Your payment information is encrypted and secure</span>
+              </div>
+            </div>
+
+            <!-- Large Pay Button -->
+            <div class="payment-actions">
+              <button type="button" class="btn-pay" id="payNow">
+                <span class="btn-content">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                    <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                  </svg>
+                  <span class="btn-text">Pay Now</span>
+                </span>
+                <span class="btn-amount">₹ {{ subtotal }}</span>
+              </button>
+              <a href="{% url 'booking' %}" class="btn-cancel">Cancel</a>
+            </div>
+          </form>
+        </div>
       </div>
     </div>
   </div>
 </div>
+
+<style>
+  /* ===== PAYMENT PAGE - PREMIUM BLACK & WHITE THEME ===== */
+  
+  .payment-page {
+    min-height: calc(100vh - 200px);
+    padding: 3rem 1rem;
+    background: #0a0a0a;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .payment-page::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: 
+      radial-gradient(ellipse at 20% 20%, rgba(255,255,255,0.03) 0%, transparent 50%),
+      radial-gradient(ellipse at 80% 80%, rgba(255,255,255,0.02) 0%, transparent 50%);
+    pointer-events: none;
+  }
+
+  .payment-container {
+    max-width: 1000px;
+    margin: 0 auto;
+    position: relative;
+    z-index: 1;
+  }
+
+  /* Header */
+  .payment-header {
+    text-align: center;
+    margin-bottom: 3rem;
+  }
+
+  .secure-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: #fff;
+    padding: 0.6rem 1.2rem;
+    border-radius: 50px;
+    font-size: 0.75rem;
+    font-weight: 500;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    margin-bottom: 1.5rem;
+    backdrop-filter: blur(10px);
+    animation: fadeSlideDown 0.6s ease-out;
+  }
+
+  @keyframes fadeSlideDown {
+    from {
+      opacity: 0;
+      transform: translateY(-20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .payment-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 2.8rem;
+    font-weight: 600;
+    color: #fff;
+    margin-bottom: 0.75rem;
+    letter-spacing: -0.5px;
+  }
+
+  .payment-subtitle {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 1rem;
+    color: rgba(255, 255, 255, 0.5);
+    font-weight: 300;
+  }
+
+  /* Content Layout */
+  .payment-content {
+    display: grid;
+    grid-template-columns: 1fr 1.3fr;
+    gap: 2rem;
+  }
+
+  @media (max-width: 768px) {
+    .payment-content {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  /* Card Styles */
+  .order-summary-card,
+  .payment-method-card {
+    background: #111;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 20px;
+    overflow: hidden;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .order-summary-card:hover,
+  .payment-method-card:hover {
+    border-color: rgba(255, 255, 255, 0.15);
+    transform: translateY(-4px);
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
+  }
+
+  .card-header {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 1.5rem 1.75rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    background: rgba(255, 255, 255, 0.02);
+  }
+
+  .header-icon {
+    width: 42px;
+    height: 42px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #fff;
+    border-radius: 12px;
+    color: #0a0a0a;
+  }
+
+  .card-header h2 {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 1rem;
+    font-weight: 600;
+    color: #fff;
+    margin: 0;
+    letter-spacing: 0.3px;
+  }
+
+  .card-body {
+    padding: 1.75rem;
+  }
+
+  /* Order Summary */
+  .order-items {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .order-item {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 0.85rem 0;
+  }
+
+  .item-image {
+    width: 56px;
+    height: 56px;
+    border-radius: 10px;
+    overflow: hidden;
+    flex-shrink: 0;
+    background: #1a1a1a;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .item-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .item-image .no-img {
+    color: rgba(255, 255, 255, 0.3);
+  }
+
+  .item-details {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+  }
+
+  .item-name {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: #fff;
+  }
+
+  .item-quantity,
+  .item-description {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 0.75rem;
+    color: rgba(255, 255, 255, 0.4);
+  }
+
+  .item-price {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: #fff;
+  }
+
+  /* Booking Info */
+  .booking-info {
+    background: rgba(255, 255, 255, 0.02);
+    border-radius: 10px;
+    padding: 1rem;
+  }
+
+  .info-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 0.4rem 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  }
+
+  .info-row:last-child {
+    border-bottom: none;
+  }
+
+  .info-label {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 0.8rem;
+    color: rgba(255, 255, 255, 0.5);
+  }
+
+  .info-value {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 0.8rem;
+    color: #fff;
+  }
+
+  .order-divider {
+    margin: 1.5rem 0;
+    position: relative;
+    display: flex;
+    justify-content: center;
+  }
+
+  .divider-line {
+    width: 100%;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+  }
+
+  .order-totals {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .total-row {
+    display: flex;
+    justify-content: space-between;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 0.85rem;
+    color: rgba(255, 255, 255, 0.6);
+  }
+
+  .total-row span:last-child {
+    font-weight: 500;
+    color: #fff;
+  }
+
+  .free-shipping {
+    color: #4ade80 !important;
+    font-weight: 600 !important;
+    letter-spacing: 0.5px;
+  }
+
+  .final-total {
+    padding-top: 1rem;
+    border-top: 1px dashed rgba(255, 255, 255, 0.1);
+    font-weight: 700 !important;
+    font-size: 1.2rem !important;
+    color: #fff !important;
+    margin-top: 0.5rem;
+  }
+
+  .trust-badges {
+    display: flex;
+    justify-content: center;
+    gap: 1.5rem;
+    margin-top: 1.75rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+  }
+
+  .trust-badge {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 0.7rem;
+    color: rgba(255, 255, 255, 0.4);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .trust-badge svg {
+    color: #4ade80;
+  }
+
+  /* Payment Method Styles */
+  .payment-options {
+    display: flex;
+    flex-direction: column;
+    gap: 0.9rem;
+    margin-bottom: 1.75rem;
+  }
+
+  .payment-option {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1.1rem 1.25rem;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 14px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    background: rgba(255, 255, 255, 0.02);
+  }
+
+  .payment-option:hover {
+    border-color: rgba(255, 255, 255, 0.2);
+    background: rgba(255, 255, 255, 0.04);
+  }
+
+  .payment-option:has(input:checked) {
+    border-color: #fff;
+    background: rgba(255, 255, 255, 0.06);
+  }
+
+  .payment-option input {
+    display: none;
+  }
+
+  .option-radio {
+    width: 20px;
+    height: 20px;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    border-radius: 50%;
+    position: relative;
+    flex-shrink: 0;
+    transition: all 0.3s ease;
+  }
+
+  .payment-option:has(input:checked) .option-radio {
+    border-color: #fff;
+    background: #fff;
+  }
+
+  .payment-option:has(input:checked) .option-radio::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 8px;
+    height: 8px;
+    background: #0a0a0a;
+    border-radius: 50%;
+  }
+
+  .option-content {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    flex: 1;
+  }
+
+  .option-icon {
+    width: 44px;
+    height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.05);
+    color: rgba(255, 255, 255,);
+    transition: 0.6 all 0.3s ease;
+  }
+
+  .payment-option:has(input:checked) .option-icon {
+    background: #fff;
+    color: #0a0a0a;
+  }
+
+  .option-text {
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+  }
+
+  .option-label {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #fff;
+  }
+
+  .option-sublabel {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 0.75rem;
+    color: rgba(255, 255, 255, 0.4);
+  }
+
+  /* Card Details */
+  .card-details {
+    display: none;
+    padding-top: 1.5rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.06);
+    animation: fadeIn 0.4s ease;
+  }
+
+  .card-details.active {
+    display: block;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .card-brands {
+    display: flex;
+    justify-content: center;
+    gap: 1.25rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .card-brands img {
+    height: 26px;
+    border-radius: 4px;
+    opacity: 0.8;
+  }
+
+  .form-group {
+    margin-bottom: 1.1rem;
+  }
+
+  .form-group label {
+    display: block;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 0.75rem;
+    font-weight: 500;
+    color: rgba(255, 255, 255, 0.7);
+    margin-bottom: 0.6rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .input-wrapper {
+    position: relative;
+  }
+
+  .form-control {
+    width: 100%;
+    height: 52px;
+    padding: 0.8rem 1rem 0.8rem 2.75rem;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 0.95rem;
+    color: #fff;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    transition: all 0.3s ease;
+    background: rgba(255, 255, 255, 0.03);
+  }
+
+  .form-control::placeholder {
+    color: rgba(255, 255, 255, 0.25);
+  }
+
+  .form-control:focus {
+    outline: none;
+    border-color: #fff;
+    background: rgba(255, 255, 255, 0.06);
+    box-shadow: 0 0 0 4px rgba(255, 255, 255, 0.05);
+  }
+
+  .form-control.is-invalid {
+    border-color: #ef4444;
+  }
+
+  .form-control.is-valid {
+    border-color: #4ade80;
+  }
+
+  .input-icon {
+    position: absolute;
+    left: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: rgba(255, 255, 255, 0.3);
+    pointer-events: none;
+    transition: color 0.3s ease;
+  }
+
+  .form-control:focus ~ .input-icon,
+  .input-wrapper:focus-within .input-icon {
+    color: #fff;
+  }
+
+  .validation-message {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 0.7rem;
+    color: #ef4444;
+    margin-top: 0.4rem;
+    min-height: 1.1em;
+  }
+
+  .form-row {
+    display: flex;
+    gap: 1rem;
+  }
+
+  .col-6 {
+    flex: 1;
+  }
+
+  .secure-notice {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    margin-top: 1.5rem;
+    padding: 0.85rem;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: 10px;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 0.7rem;
+    color: rgba(255, 255, 255, 0.4);
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+  }
+
+  .secure-notice svg {
+    color: #4ade80;
+  }
+
+  /* ===== IMPROVED PAY BUTTON - LARGE & CENTERED ===== */
+  .payment-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    margin-top: 2rem;
+  }
+
+  .btn-pay {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    justify-content: space-between;
+    padding: 0 2rem;
+    height: 64px;
+    background: #fff;
+    color: #0a0a0a;
+    border: none;
+    border-radius: 16px;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 4px 20px rgba(255, 255, 255, 0.15);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .btn-pay::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(0,0,0,0.05), transparent);
+    transition: left 0.6s ease;
+  }
+
+  .btn-pay:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 12px 40px rgba(255, 255, 255, 0.25);
+  }
+
+  .btn-pay:hover::before {
+    left: 100%;
+  }
+
+  .btn-pay:active {
+    transform: translateY(-1px);
+  }
+
+  .btn-content {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+  }
+
+  .btn-text {
+    letter-spacing: 0.5px;
+  }
+
+  .btn-amount {
+    background: #0a0a0a;
+    color: #fff;
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    font-size: 0.95rem;
+    font-weight: 700;
+  }
+
+  .btn-cancel {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 48px;
+    padding: 0 1.5rem;
+    background: transparent;
+    color: rgba(255, 255, 255, 0.5);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 0.85rem;
+    font-weight: 500;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    letter-spacing: 0.3px;
+  }
+
+  .btn-cancel:hover {
+    border-color: rgba(255, 255, 255, 0.3);
+    color: #fff;
+  }
+
+  /* Mobile Responsive */
+  @media (max-width: 576px) {
+    .payment-page {
+      padding: 1.5rem 0.75rem;
+    }
+
+    .payment-title {
+      font-size: 2rem;
+    }
+
+    .card-header {
+      padding: 1.25rem;
+    }
+
+    .card-body {
+      padding: 1.25rem;
+    }
+
+    .payment-option {
+      padding: 0.9rem 1rem;
+    }
+
+    .form-control {
+      height: 48px;
+      font-size: 0.9rem;
+    }
+
+    .btn-pay {
+      height: 58px;
+      padding: 0 1.5rem;
+    }
+
+    .btn-pay span:not(.btn-amount) {
+      font-size: 0.9rem;
+    }
+
+    .btn-cancel {
+      height: 44px;
+    }
+
+    .trust-badges {
+      flex-wrap: wrap;
+      gap: 0.75rem;
+    }
+  }
+</style>
 {% endblock %}
 
 {% block extra_js %}
 <script>
-(function() {
+document.addEventListener('DOMContentLoaded', function() {
+  const cardOption = document.getElementById('cardOption');
+  const cardDetails = document.getElementById('cardDetails');
   const numberInput = document.getElementById('cardNumber');
   const expiryInput = document.getElementById('cardExpiry');
   const cvvInput = document.getElementById('cardCvv');
   const nameInput = document.getElementById('cardName');
-  const codInput = document.getElementById('codOption');
   const payNow = document.getElementById('payNow');
 
-  function formatNumber(val) {
-    return val.replace(/\D/g, '').slice(0,16).replace(/(.{4})/g, '$1 ').trim();
+  // Toggle card details visibility based on payment method
+  function toggleCardDetails() {
+    if (cardOption && cardOption.checked) {
+      cardDetails.classList.add('active');
+    } else {
+      cardDetails.classList.remove('active');
+    }
   }
 
+  if (cardOption) cardOption.addEventListener('change', toggleCardDetails);
+  
+  // Initialize on load
+  toggleCardDetails();
+
+  // Card number formatting
+  if (numberInput) {
+    numberInput.addEventListener('input', function(e) {
+      let value = this.value.replace(/\D/g, '').slice(0, 16);
+      let formatted = value.replace(/(.{4})/g, '$1 ').trim();
+      this.value = formatted;
+      validateCardNumber(this, value);
+    });
+  }
+
+  // Expiry date formatting
+  if (expiryInput) {
+    expiryInput.addEventListener('input', function(e) {
+      let value = this.value.replace(/\D/g, '').slice(0, 4);
+      if (value.length > 2) {
+        value = value.slice(0, 2) + '/' + value.slice(2);
+      }
+      this.value = value;
+      validateExpiry(this, value);
+    });
+  }
+
+  // CVV formatting
+  if (cvvInput) {
+    cvvInput.addEventListener('input', function(e) {
+      this.value = this.value.replace(/\D/g, '').slice(0, 3);
+      validateCvv(this, this.value);
+    });
+  }
+
+  // Validation functions
+  function validateCardNumber(input, value) {
+    const errorDiv = document.getElementById('cardNumberError');
+    if (!value) {
+      input.classList.remove('is-valid', 'is-invalid');
+      errorDiv.textContent = '';
+      return false;
+    }
+    if (value.length !== 16) {
+      input.classList.remove('is-valid');
+      input.classList.add('is-invalid');
+      errorDiv.textContent = 'Enter a valid 16-digit card number';
+      return false;
+    }
+    input.classList.remove('is-invalid');
+    input.classList.add('is-valid');
+    errorDiv.textContent = '';
+    return true;
+  }
+
+  function validateExpiry(input, value) {
+    const errorDiv = document.getElementById('cardExpiryError');
+    const expMatch = value.match(/^(0[1-9]|1[0-2])\/\d{2}$/);
+    if (!value) {
+      input.classList.remove('is-valid', 'is-invalid');
+      errorDiv.textContent = '';
+      return false;
+    }
+    if (!expMatch) {
+      input.classList.remove('is-valid');
+      input.classList.add('is-invalid');
+      errorDiv.textContent = 'Enter a valid expiry (MM/YY)';
+      return false;
+    }
+    input.classList.remove('is-invalid');
+    input.classList.add('is-valid');
+    errorDiv.textContent = '';
+    return true;
+  }
+
+  function validateCvv(input, value) {
+    const errorDiv = document.getElementById('cardCvvError');
+    if (!value) {
+      input.classList.remove('is-valid', 'is-invalid');
+      errorDiv.textContent = '';
+      return false;
+    }
+    if (value.length !== 3) {
+      input.classList.remove('is-valid');
+      input.classList.add('is-invalid');
+      errorDiv.textContent = 'Enter 3-digit CVV';
+      return false;
+    }
+    input.classList.remove('is-invalid');
+    input.classList.add('is-valid');
+    errorDiv.textContent = '';
+    return true;
+  }
+
+  function validateName(input) {
+    const errorDiv = document.getElementById('cardNameError');
+    if (!input.value.trim()) {
+      input.classList.remove('is-valid');
+      input.classList.add('is-invalid');
+      errorDiv.textContent = 'Enter the name on card';
+      return false;
+    }
+    input.classList.remove('is-invalid');
+    input.classList.add('is-valid');
+    errorDiv.textContent = '';
+    return true;
+  }
+
+  // Form validation
   function validate() {
     let ok = true;
-    if (!nameInput.value.trim() || /\d/.test(nameInput.value)) { nameInput.classList.add('is-invalid'); ok = false; } else { nameInput.classList.remove('is-invalid'); }
-    const digits = numberInput.value.replace(/\s/g, '');
-    if (digits.length !== 16) { numberInput.classList.add('is-invalid'); ok = false; } else { numberInput.classList.remove('is-invalid'); }
-    const exp = expiryInput.value.trim();
-    const expMatch = exp.match(/^(0[1-9]|1[0-2])\/\d{2}$/);
-    if (!expMatch) { expiryInput.classList.add('is-invalid'); ok = false; } else { expiryInput.classList.remove('is-invalid'); }
-    if (cvvInput.value.trim().length !== 3) { cvvInput.classList.add('is-invalid'); ok = false; } else { cvvInput.classList.remove('is-invalid'); }
+    
+    // Only card payment is available for portrait booking
+    if (!validateName(nameInput)) ok = false;
+    const cardDigits = numberInput.value.replace(/\s/g, '');
+    if (!validateCardNumber(numberInput, cardDigits)) ok = false;
+    if (!validateExpiry(expiryInput, expiryInput.value)) ok = false;
+    if (!validateCvv(cvvInput, cvvInput.value)) ok = false;
+    
     return ok;
   }
 
-  numberInput.addEventListener('input', e => numberInput.value = formatNumber(numberInput.value));
-  expiryInput.addEventListener('input', e => {
-    let v = expiryInput.value.replace(/\D/g, '').slice(0,4);
-    if (v.length > 2) v = v.slice(0,2) + '/' + v.slice(2);
-    expiryInput.value = v;
-  });
-  cvvInput.addEventListener('input', e => cvvInput.value = cvvInput.value.replace(/\D/g,'').slice(0,3));
-
-  payNow.addEventListener('click', (e) => {
-    if (!validate()) {
-      e.preventDefault();
-      return;
-    }
-    // Form will submit normally
-  });
-})();
+  // Pay button click handler
+  if (payNow) {
+    payNow.addEventListener('click', function() {
+      if (!validate()) return;
+      // Simulate online payment (redirect to success)
+      window.location.href = "{% url 'payment_success' %}";
+    });
+  }
+});
 </script>
 {% endblock %}
+

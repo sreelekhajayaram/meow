@@ -84,7 +84,7 @@ def user_dashboard(request):
     orders = Order.objects.filter(user=request.user).order_by('-created_at')
     bookings = PortraitBooking.objects.filter(user=request.user).order_by('-created_at')
     total_spent = orders.aggregate(total=models.Sum('total_price'))['total'] or 0
-    return render(request, 'user_dashboard_enhanced.html', {'orders': orders, 'bookings': bookings, 'total_spent': total_spent})
+    return render(request, 'user_dashboard_modern.html', {'orders': orders, 'bookings': bookings, 'total_spent': total_spent})
 
 
 def forgot_password(request):

@@ -25,7 +25,9 @@
         <p class="text-danger font-weight-bold">Out of Stock</p>
         {% else %}
         <p class="text-muted">Stock: {{ product.stock }}</p>
-        <form method="post" action="{% url 'add_to_cart' product.id %}" class="form-inline">
+        
+        <!-- Add to Cart Form -->
+        <form method="post" action="{% url 'add_to_cart' product.id %}" class="form-inline d-inline-block">
             {% csrf_token %}
             <div class="input-group mb-3 mr-2">
                 <div class="input-group-prepend">
@@ -37,8 +39,15 @@
                 </div>
             </div>
             <button type="submit" class="btn btn-primary mr-2">Add to Cart</button>
-            <button type="submit" name="buy_now" value="1" class="btn btn-outline-success">Buy Now</button>
         </form>
+        
+        <!-- Buy Now Form - Separate from Add to Cart -->
+        <form method="post" action="{% url 'buy_now_direct' product.id %}" class="form-inline d-inline-block">
+            {% csrf_token %}
+            <input type="hidden" name="quantity" class="buy-now-qty" value="1">
+            <button type="submit" class="btn btn-outline-success">Buy Now</button>
+        </form>
+        
         {% endif %}
     </div>
 </div>
@@ -64,16 +73,39 @@
         // allow clicking thumbnails to jump
         imgs.forEach((t, i) => t.addEventListener('click', ()=>{ idx = i; show(i); }))
     })();
+    
+    // Quantity controls for Add to Cart form
     document.querySelectorAll('.qty-minus').forEach(btn => {
         btn.addEventListener('click', () => {
             const input = btn.parentElement.parentElement.querySelector('.qty-input');
-            input.value = Math.max(1, parseInt(input.value || 1) - 1);
+            const newValue = Math.max(1, parseInt(input.value || 1) - 1);
+            input.value = newValue;
+            // Sync with Buy Now form
+            document.querySelectorAll('.buy-now-qty').forEach(hiddenInput => {
+                hiddenInput.value = newValue;
+            });
         });
     });
     document.querySelectorAll('.qty-plus').forEach(btn => {
         btn.addEventListener('click', () => {
             const input = btn.parentElement.parentElement.querySelector('.qty-input');
-            input.value = parseInt(input.value || 1) + 1;
+            const maxStock = parseInt(input.getAttribute('max')) || 999;
+            const newValue = Math.min(maxStock, parseInt(input.value || 1) + 1);
+            input.value = newValue;
+            // Sync with Buy Now form
+            document.querySelectorAll('.buy-now-qty').forEach(hiddenInput => {
+                hiddenInput.value = newValue;
+            });
+        });
+    });
+    
+    // Also sync when typing directly in the input
+    document.querySelectorAll('.qty-input').forEach(input => {
+        input.addEventListener('input', () => {
+            const newValue = Math.max(1, parseInt(input.value || 1));
+            document.querySelectorAll('.buy-now-qty').forEach(hiddenInput => {
+                hiddenInput.value = newValue;
+            });
         });
     });
 </script>

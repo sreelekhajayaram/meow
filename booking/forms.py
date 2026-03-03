@@ -44,44 +44,261 @@ INDIAN_STATES = [
     ('West Bengal','West Bengal'),
 ]
 
-# State-City Mapping for dynamic dropdown
-STATE_CITY_MAP = {
-    'Andhra Pradesh': ['Hyderabad', 'Vijayawada', 'Visakhapatnam', 'Tirupati', 'Kakinada'],
-    'Arunachal Pradesh': ['Itanagar', 'Naharlagun', 'Changlang'],
-    'Assam': ['Guwahati', 'Dibrugarh', 'Silchar', 'Nagaon', 'Tinsukia'],
-    'Bihar': ['Patna', 'Gaya', 'Bhagalpur', 'Darbhanga', 'Arrah'],
+# State-District Mapping for dynamic dropdown (All Indian Districts)
+INDIA_STATE_DISTRICTS = {
+    'Andhra Pradesh': [
+        "Anakapalli","Anantapur","Annamayya","Bapatla","Chittoor",
+        "East Godavari","Eluru","Guntur","Kakinada","Konaseema",
+        "Krishna","Kurnool","Nandyal","Nellore","Palnadu",
+        "Parvathipuram Manyam","Prakasam","Sri Sathya Sai",
+        "Srikakulam","Tirupati","Visakhapatnam","Vizianagaram",
+        "West Godavari","YSR Kadapa"
+    ],
+    'Arunachal Pradesh': [
+        "Anjaw","Changlang","Dibang Valley","East Kameng",
+        "East Siang","Kamle","Kra Daadi","Kurung Kumey",
+        "Lepa Rada","Lohit","Longding","Lower Dibang Valley",
+        "Lower Siang","Lower Subansiri","Namsai",
+        "Pakke Kessang","Papum Pare","Shi Yomi",
+        "Siang","Tawang","Tirap","Upper Siang",
+        "Upper Subansiri","West Kameng","West Siang"
+    ],
+    'Assam': [
+        "Baksa","Barpeta","Biswanath","Bongaigaon","Cachar",
+        "Charaideo","Chirang","Darrang","Dhemaji","Dhubri",
+        "Dibrugarh","Dima Hasao","Goalpara","Golaghat",
+        "Hailakandi","Hojai","Jorhat","Kamrup",
+        "Kamrup Metropolitan","Karbi Anglong",
+        "Karimganj","Kokrajhar","Lakhimpur","Majuli",
+        "Morigaon","Nagaon","Nalbari","Sivasagar",
+        "Sonitpur","South Salmara-Mankachar",
+        "Tinsukia","Udalguri","West Karbi Anglong"
+    ],
+    'Bihar': [
+        "Araria","Arwal","Aurangabad","Banka","Begusarai",
+        "Bhagalpur","Bhojpur","Buxar","Darbhanga","East Champaran",
+        "Gaya","Gopalganj","Jamui","Jehanabad","Kaimur",
+        "Katihar","Khagaria","Kishanganj","Lakhisarai",
+        "Madhepura","Madhubani","Munger","Muzaffarpur",
+        "Nalanda","Nawada","Patna","Purnia","Rohtas",
+        "Saharsa","Samastipur","Saran","Sheikhpura",
+        "Sheohar","Sitamarhi","Siwan","Supaul",
+        "Vaishali","West Champaran"
+    ],
+    'Chhattisgarh': [
+        "Balod","Baloda Bazar","Balrampur","Bastar",
+        "Bemetara","Bijapur","Bilaspur","Dantewada",
+        "Dhamtari","Durg","Gariaband","Gaurela-Pendra-Marwahi",
+        "Janjgir-Champa","Jashpur","Kabirdham","Kanker",
+        "Kondagaon","Korba","Koriya","Mahasamund",
+        "Mungeli","Narayanpur","Raigarh","Raipur",
+        "Rajnandgaon","Sukma","Surajpur","Surguja"
+    ],
+    'Goa': [
+        "North Goa","South Goa"
+    ],
+    'Gujarat': [
+        "Ahmedabad","Amreli","Anand","Aravalli","Banaskantha",
+        "Bharuch","Bhavnagar","Botad","Chhota Udaipur",
+        "Dahod","Dang","Devbhoomi Dwarka","Gandhinagar",
+        "Gir Somnath","Jamnagar","Junagadh","Kheda",
+        "Kutch","Mahisagar","Mehsana","Morbi",
+        "Narmada","Navsari","Panchmahal","Patan",
+        "Porbandar","Rajkot","Sabarkantha","Surat",
+        "Surendranagar","Tapi","Vadodara","Valsad"
+    ],
+    'Haryana': [
+        "Ambala","Bhiwani","Charkhi Dadri","Faridabad",
+        "Fatehabad","Gurugram","Hisar","Jhajjar",
+        "Jind","Kaithal","Karnal","Kurukshetra",
+        "Mahendragarh","Nuh","Palwal","Panchkula",
+        "Panipat","Rewari","Rohtak","Sirsa",
+        "Sonipat","Yamunanagar"
+    ],
+    'Himachal Pradesh': [
+        "Bilaspur","Chamba","Hamirpur","Kangra",
+        "Kinnaur","Kullu","Lahaul and Spiti",
+        "Mandi","Shimla","Sirmaur","Solan","Una"
+    ],
+    'Jharkhand': [
+        "Bokaro","Chatra","Deoghar","Dhanbad",
+        "Dumka","East Singhbhum","Garhwa","Giridih",
+        "Godda","Gumla","Hazaribagh","Jamtara",
+        "Khunti","Koderma","Latehar","Lohardaga",
+        "Pakur","Palamu","Ramgarh","Ranchi",
+        "Sahibganj","Seraikela Kharsawan","Simdega",
+        "West Singhbhum"
+    ],
+    'Karnataka': [
+        "Bagalkot","Ballari","Belagavi","Bengaluru Rural",
+        "Bengaluru Urban","Bidar","Chamarajanagar",
+        "Chikkaballapur","Chikkamagaluru","Chitradurga",
+        "Dakshina Kannada","Davanagere","Dharwad",
+        "Gadag","Hassan","Haveri","Kalaburagi",
+        "Kodagu","Kolar","Koppal","Mandya",
+        "Mysuru","Raichur","Ramanagara","Shivamogga",
+        "Tumakuru","Udupi","Uttara Kannada",
+        "Vijayanagara","Vijayapura","Yadgir"
+    ],
+    'Kerala': [
+        "Alappuzha","Ernakulam","Idukki","Kannur",
+        "Kasaragod","Kollam","Kottayam","Kozhikode",
+        "Malappuram","Palakkad","Pathanamthitta",
+        "Thiruvananthapuram","Thrissur","Wayanad"
+    ],
+    'Madhya Pradesh': [
+        "Agar Malwa","Alirajpur","Anuppur","Ashoknagar",
+        "Balaghat","Barwani","Betul","Bhind","Bhopal",
+        "Burhanpur","Chhatarpur","Chhindwara","Damoh",
+        "Datia","Dewas","Dhar","Dindori","Guna",
+        "Gwalior","Harda","Hoshangabad","Indore",
+        "Jabalpur","Jhabua","Katni","Khandwa",
+        "Khargone","Mandla","Mandsaur","Morena",
+        "Narsinghpur","Neemuch","Panna","Raisen",
+        "Rajgarh","Ratlam","Rewa","Sagar","Satna",
+        "Sehore","Seoni","Shahdol","Shajapur",
+        "Sheopur","Shivpuri","Sidhi","Singrauli",
+        "Tikamgarh","Ujjain","Umaria","Vidisha"
+    ],
+    'Maharashtra': [
+        "Ahmednagar","Akola","Amravati","Aurangabad","Beed",
+        "Bhandara","Buldhana","Chandrapur","Dhule","Gadchiroli",
+        "Gondia","Hingoli","Jalgaon","Jalna","Kolhapur",
+        "Latur","Mumbai City","Mumbai Suburban","Nagpur",
+        "Nanded","Nandurbar","Nashik","Osmanabad","Palghar",
+        "Parbhani","Pune","Raigad","Ratnagiri","Sangli",
+        "Satara","Sindhudurg","Solapur","Thane","Wardha",
+        "Washim","Yavatmal"
+    ],
+    'Manipur': [
+        "Bishnupur","Chandel","Churachandpur","Imphal East",
+        "Imphal West","Jiribam","Kakching","Kamjong",
+        "Kangpokpi","Noney","Pherzawl","Senapati",
+        "Tamenglong","Tengnoupal","Thoubal","Ukhrul"
+    ],
+    'Meghalaya': [
+        "East Garo Hills","East Jaintia Hills","East Khasi Hills",
+        "North Garo Hills","Ri Bhoi","South Garo Hills",
+        "South West Garo Hills","South West Khasi Hills",
+        "West Garo Hills","West Jaintia Hills","West Khasi Hills"
+    ],
+    'Mizoram': [
+        "Aizawl","Champhai","Hnahthial","Khawzawl",
+        "Kolasib","Lawngtlai","Lunglei","Mamit",
+        "Saiha","Saitual","Serchhip"
+    ],
+    'Nagaland': [
+        "Chumoukedima","Dimapur","Kiphire","Kohima",
+        "Longleng","Mokokchung","Mon","Niuland",
+        "Noklak","Peren","Phek","Shamator",
+        "Tseminyu","Tuensang","Wokha","Zunheboto"
+    ],
+    'Odisha': [
+        "Angul","Balangir","Balasore","Bargarh",
+        "Bhadrak","Boudh","Cuttack","Deogarh",
+        "Dhenkanal","Gajapati","Ganjam","Jagatsinghpur",
+        "Jajpur","Jharsuguda","Kalahandi","Kandhamal",
+        "Kendrapara","Kendujhar","Khordha","Koraput",
+        "Malkangiri","Mayurbhanj","Nabarangpur","Nayagarh",
+        "Nuapada","Puri","Rayagada","Sambalpur",
+        "Subarnapur","Sundargarh"
+    ],
+    'Punjab': [
+        "Amritsar","Barnala","Bathinda","Faridkot",
+        "Fatehgarh Sahib","Fazilka","Ferozepur","Gurdaspur",
+        "Hoshiarpur","Jalandhar","Kapurthala","Ludhiana",
+        "Malerkotla","Mansa","Moga","Mohali",
+        "Muktsar","Nawanshahr","Pathankot","Patiala",
+        "Rupnagar","Sangrur","Tarn Taran"
+    ],
+    'Rajasthan': [
+        "Ajmer","Alwar","Anupgarh","Balotra",
+        "Banswara","Baran","Barmer","Beawar",
+        "Bharatpur","Bhilwara","Bikaner","Bundi",
+        "Chittorgarh","Churu","Dausa","Deeg",
+        "Dholpur","Didwana-Kuchaman","Dudu","Dungarpur",
+        "Ganganagar","Gangapur City","Hanumangarh",
+        "Jaipur","Jaipur Rural","Jaisalmer","Jalore",
+        "Jhalawar","Jhunjhunu","Jodhpur","Jodhpur Rural",
+        "Karauli","Kekri","Khairthal-Tijara","Kota",
+        "Kotputli-Behror","Nagaur","Neem Ka Thana",
+        "Pali","Phalodi","Pratapgarh","Rajsamand",
+        "Salumbar","Sanchore","Sawai Madhopur",
+        "Shahpura","Sikar","Sirohi","Tonk","Udaipur"
+    ],
+    'Sikkim': [
+        "Gangtok","Gyalshing","Mangan","Namchi","Pakyong","Soreng"
+    ],
+    'Tamil Nadu': [
+        "Ariyalur","Chengalpattu","Chennai","Coimbatore",
+        "Cuddalore","Dharmapuri","Dindigul","Erode",
+        "Kallakurichi","Kancheepuram","Karur","Krishnagiri",
+        "Madurai","Mayiladuthurai","Nagapattinam","Namakkal",
+        "Nilgiris","Perambalur","Pudukkottai","Ramanathapuram",
+        "Ranipet","Salem","Sivaganga","Tenkasi",
+        "Thanjavur","Theni","Thoothukudi","Tiruchirappalli",
+        "Tirunelveli","Tirupathur","Tiruppur","Tiruvallur",
+        "Tiruvannamalai","Tiruvarur","Vellore",
+        "Viluppuram","Virudhunagar"
+    ],
+    'Telangana': [
+        "Adilabad","Bhadradri Kothagudem","Hanamkonda",
+        "Hyderabad","Jagtial","Jangaon","Jayashankar Bhupalpally",
+        "Jogulamba Gadwal","Kamareddy","Karimnagar",
+        "Khammam","Komaram Bheem","Mahabubabad",
+        "Mahabubnagar","Mancherial","Medak",
+        "Medchal–Malkajgiri","Mulugu","Nagarkurnool",
+        "Nalgonda","Narayanpet","Nirmal","Nizamabad",
+        "Peddapalli","Rajanna Sircilla","Rangareddy",
+        "Sangareddy","Siddipet","Suryapet",
+        "Vikarabad","Wanaparthy","Warangal","Yadadri Bhuvanagiri"
+    ],
+    'Tripura': [
+        "Dhalai","Gomati","Khowai","North Tripura",
+        "Sepahijala","South Tripura","Unakoti","West Tripura"
+    ],
+    'Uttar Pradesh': [
+        "Agra","Aligarh","Ambedkar Nagar","Amethi","Amroha",
+        "Auraiya","Ayodhya","Azamgarh","Baghpat","Bahraich",
+        "Ballia","Balrampur","Banda","Barabanki","Bareilly",
+        "Basti","Bhadohi","Bijnor","Budaun","Bulandshahr",
+        "Chandauli","Chitrakoot","Deoria","Etah","Etawah",
+        "Farrukhabad","Fatehpur","Firozabad","Gautam Buddha Nagar",
+        "Ghaziabad","Ghazipur","Gonda","Gorakhpur","Hamirpur",
+        "Hapur","Hardoi","Hathras","Jalaun","Jaunpur",
+        "Jhansi","Kannauj","Kanpur Dehat","Kanpur Nagar",
+        "Kasganj","Kaushambi","Kheri","Kushinagar","Lalitpur",
+        "Lucknow","Maharajganj","Mahoba","Mainpuri","Mathura",
+        "Mau","Meerut","Mirzapur","Moradabad","Muzaffarnagar",
+        "Pilibhit","Pratapgarh","Prayagraj","Raebareli",
+        "Rampur","Saharanpur","Sambhal","Sant Kabir Nagar",
+        "Shahjahanpur","Shamli","Shrawasti","Siddharthnagar",
+        "Sitapur","Sonbhadra","Sultanpur","Unnao","Varanasi"
+    ],
+    'Uttarakhand': [
+        "Almora","Bageshwar","Chamoli","Champawat",
+        "Dehradun","Haridwar","Nainital",
+        "Pauri Garhwal","Pithoragarh","Rudraprayag",
+        "Tehri Garhwal","Udham Singh Nagar","Uttarkashi"
+    ],
+    'West Bengal': [
+        "Alipurduar","Bankura","Birbhum","Cooch Behar",
+        "Dakshin Dinajpur","Darjeeling","Hooghly","Howrah",
+        "Jalpaiguri","Jhargram","Kalimpong","Kolkata",
+        "Malda","Murshidabad","Nadia","North 24 Parganas",
+        "Paschim Bardhaman","Paschim Medinipur",
+        "Purba Bardhaman","Purba Medinipur",
+        "Purulia","South 24 Parganas","Uttar Dinajpur"
+    ],
+    # Union Territories and other states
+    'Andaman and Nicobar Islands': ['Port Blair', 'Car Nicobar', 'Great Nicobar', 'Middle Andaman', 'South Andaman'],
     'Chandigarh': ['Chandigarh'],
-    'Chhattisgarh': ['Raipur', 'Bhilai', 'Durg', 'Bilaspur', 'Rajnandgaon'],
-    'Delhi': ['New Delhi', 'Delhi'],
-    'Goa': ['Panaji', 'Margao', 'Vasco da Gama', 'Ponda'],
-    'Gujarat': ['Ahmedabad', 'Surat', 'Vadodara', 'Rajkot', 'Jamnagar', 'Gandhinagar', 'Bhavnagar'],
-    'Haryana': ['Faridabad', 'Gurgaon', 'Hisar', 'Rohtak', 'Panipat', 'Yamunanagar'],
-    'Himachal Pradesh': ['Shimla', 'Solan', 'Mandi', 'Kangra', 'Kullu', 'Hamirpur'],
-    'Jharkhand': ['Ranchi', 'Dhanbad', 'Jamshedpur', 'Giridih', 'Bokaro'],
-    'Karnataka': ['Bangalore', 'Mangalore', 'Mysore', 'Belgaum', 'Hubli', 'Davangere', 'Kochi'],
-    'Kerala': ['Kochi', 'Thiruvananthapuram', 'Kozhikode', 'Kottayam', 'Kannur', 'Palakkad'],
-    'Madhya Pradesh': ['Indore', 'Bhopal', 'Jabalpur', 'Ujjain', 'Gwalior', 'Sagar'],
-    'Maharashtra': ['Mumbai', 'Pune', 'Nagpur', 'Thane', 'Aurangabad', 'Nashik', 'Kolhapur'],
-    'Manipur': ['Imphal', 'Bishnupur'],
-    'Meghalaya': ['Shillong', 'Tura'],
-    'Mizoram': ['Aizawl', 'Lunglei'],
-    'Nagaland': ['Kohima', 'Dimapur'],
-    'Odisha': ['Bhubaneswar', 'Cuttack', 'Rourkela', 'Sambalpur', 'Berhampur'],
-    'Puducherry': ['Puducherry', 'Yanam', 'Karaikal'],
-    'Punjab': ['Ludhiana', 'Amritsar', 'Chandigarh', 'Jalandhar', 'Patiala', 'Bathinda'],
-    'Rajasthan': ['Jaipur', 'Jodhpur', 'Udaipur', 'Kota', 'Ajmer', 'Bhilwara', 'Bikaner'],
-    'Sikkim': ['Gangtok', 'Pelling'],
-    'Tamil Nadu': ['Chennai', 'Coimbatore', 'Madurai', 'Salem', 'Tiruchirappalli', 'Tiruppur', 'Karur'],
-    'Telangana': ['Hyderabad', 'Warangal', 'Nizamabad'],
-    'Tripura': ['Agartala', 'Udaipur'],
-    'Uttar Pradesh': ['Lucknow', 'Kanpur', 'Agra', 'Varanasi', 'Meerut', 'Noida', 'Ghaziabad'],
-    'Uttarakhand': ['Dehradun', 'Haridwar', 'Almora', 'Nainital', 'Rishikesh'],
-    'West Bengal': ['Kolkata', 'Asansol', 'Siliguri', 'Darjeeling', 'Howrah'],
-    'Andaman and Nicobar Islands': ['Port Blair', 'Car Nicobar'],
-    'Dadra and Nagar Haveli and Daman and Diu': ['Silvassa', 'Daman', 'Diu'],
-    'Jammu and Kashmir': ['Srinagar', 'Jammu', 'Leh'],
+    'Dadra and Nagar Haveli and Daman and Diu': ['Silvassa', 'Daman', 'Diu', 'Dadra', 'Nagar Haveli'],
+    'Delhi': ['New Delhi', 'Central Delhi', 'East Delhi', 'New Delhi', 'North Delhi', 'North East Delhi', 'North West Delhi', 'Shahdara', 'South Delhi', 'South East Delhi', 'South West Delhi', 'West Delhi'],
+    'Jammu and Kashmir': ['Srinagar', 'Jammu', 'Leh', 'Kashmir', 'Jammu', 'Kargil', 'Poonch', 'Rajouri', 'Kathua', 'Udhampur'],
     'Ladakh': ['Leh', 'Kargil'],
-    'Lakshadweep': ['Kavaratti', 'Agatti'],
+    'Lakshadweep': ['Kavaratti', 'Agatti', 'Minicoy', 'Andrott', 'Kalpeni', 'Kadamath'],
+    'Puducherry': ['Puducherry', 'Yanam', 'Karaikal', 'Mahe'],
 }
 
 SIZE_CHOICES_WITH_DESC = [
@@ -147,7 +364,7 @@ class PortraitBookingForm(forms.ModelForm):
         # Removed 'preferred_date' field as per requirement
         fields = [
             'name', 'email', 'phone',
-            'address', 'state', 'city', 'pincode',
+            'address', 'state', 'district', 'pincode',
             'category', 'size', 'reference_image', 'description', 'price'
         ]
         widgets = {
@@ -177,9 +394,9 @@ class PortraitBookingForm(forms.ModelForm):
                 'placeholder': 'Street address',
                 'autocomplete': 'address-line1'
             }),
-            'city': forms.Select(attrs={
+            'district': forms.Select(attrs={
                 'class': 'form-control form-control-lg',
-                'id': 'citySelect',
+                'id': 'districtSelect',
                 'autocomplete': 'address-level2'
             }),
             'state': forms.Select(
@@ -221,19 +438,19 @@ class PortraitBookingForm(forms.ModelForm):
         self.user = kwargs.pop('user', None)
         super().__init__(*args, **kwargs)
 
-        # Update city field to be a select with dynamic options
-        # Include all cities from STATE_CITY_MAP for validation
-        all_cities = [('', 'Select City')]
-        for cities in STATE_CITY_MAP.values():
-            for city in cities:
-                if (city, city) not in all_cities:
-                    all_cities.append((city, city))
+        # Update district field to be a select with dynamic options
+        # Include all districts from INDIA_STATE_DISTRICTS for validation
+        all_districts = [('', 'Select District')]
+        for districts in INDIA_STATE_DISTRICTS.values():
+            for district in districts:
+                if (district, district) not in all_districts:
+                    all_districts.append((district, district))
 
-        self.fields['city'] = forms.ChoiceField(
-            choices=all_cities,
+        self.fields['district'] = forms.ChoiceField(
+            choices=all_districts,
             widget=forms.Select(attrs={
                 'class': 'form-control form-control-lg',
-                'id': 'citySelect'
+                'id': 'districtSelect'
             }),
             required=True
         )
@@ -280,7 +497,7 @@ class PortraitBookingForm(forms.ModelForm):
         self.fields['phone'].label = 'Phone Number'
         self.fields['address'].label = 'Street Address'
         self.fields['state'].label = 'State'
-        self.fields['city'].label = 'City'
+        self.fields['district'].label = 'District'
         self.fields['pincode'].label = 'PIN Code'
         self.fields['reference_image'].label = 'Upload Reference Image'
         self.fields['size'].label = 'Artwork Size'
@@ -291,24 +508,3 @@ class PortraitBookingForm(forms.ModelForm):
         # Add help text
         self.fields['pincode'].help_text = '6-digit postal code'
         self.fields['reference_image'].help_text = 'Upload a clear reference image (JPG, PNG)'
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

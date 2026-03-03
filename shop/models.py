@@ -99,7 +99,7 @@ class Order(models.Model):
     shipping_email = models.EmailField(blank=True)
     shipping_phone = models.CharField(max_length=20, blank=True)
     shipping_address = models.TextField(blank=True)
-    shipping_city = models.CharField(max_length=120, blank=True)
+    shipping_district = models.CharField(max_length=120, blank=True)
     shipping_state = models.CharField(max_length=120, blank=True)
     shipping_pincode = models.CharField(max_length=15, blank=True)
     total_price = models.DecimalField(max_digits=10, decimal_places=2, default=0)
@@ -127,4 +127,3 @@ class OrderItem(models.Model):
 
     def __str__(self):
         return f"{self.product.title} x {self.quantity}"
-

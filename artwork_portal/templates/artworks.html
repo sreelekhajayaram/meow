@@ -1,0 +1,118 @@
+{% extends "base.html" %}
+
+{% block title %}Artworks - ArtOfSree{% endblock %}
+
+{% block content %}
+<section class="py-5">
+    <div class="container">
+        <div class="row">
+            <div class="col-12 text-center mb-5">
+                <h2 class="section-header">Our Artworks</h2>
+                <p class="text-muted">Explore our complete collection of artistic masterpieces</p>
+            </div>
+        </div>
+
+        <!-- Filters -->
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-body">
+                        <form method="get" class="row g-3">
+                            <div class="col-md-4">
+                                <label for="category_filter" class="form-label">Category</label>
+                                <select name="category" id="category_filter" class="form-select">
+                                    <option value="">All Categories</option>
+                                    {% for category in categories %}
+                                    <option value="{{ category.slug }}" {% if request.GET.category == category.slug %}selected{% endif %}>{{ category.name }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="search" class="form-label">Search</label>
+                                <input type="text" name="search" id="search" class="form-control" placeholder="Search artworks..." value="{{ request.GET.search }}">
+                            </div>
+                            <div class="col-md-2">
+                                <label class="form-label">&nbsp;</label>
+                                <button type="submit" class="btn btn-gold w-100">Filter</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Artworks Grid -->
+        <div class="row" id="artworks-grid">
+            {% for artwork in artworks %}
+            <div class="col-md-4 mb-4">
+                <div class="card artwork-card h-100">
+                    <img src="/static/images/{{ artwork.image }}" class="card-img-top" alt="{{ artwork.title }}">
+                    <div class="card-body">
+                        <h5 class="card-title">{{ artwork.title }}</h5>
+                        <p class="card-text text-muted">{{ artwork.category }}</p>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <span class="price-tag">₹{{ artwork.price }}</span>
+                            <span class="badge badge-popularity">★ {{ artwork.popularity_score|floatformat:1 }}</span>
+                        </div>
+                    </div>
+                    <div class="card-footer bg-white">
+                        <a href="/artwork/{{ artwork.id }}" class="btn btn-primary btn-block">View Details</a>
+                    </div>
+                </div>
+            </div>
+            {% empty %}
+            <div class="col-12 text-center py-5">
+                <i class="fas fa-palette fa-3x text-muted mb-3"></i>
+                <h4 class="text-muted">No artworks found</h4>
+                <p class="text-muted">Try adjusting your filters or search terms</p>
+            </div>
+            {% endfor %}
+        </div>
+
+        <!-- Pagination -->
+        {% if artworks.has_other_pages %}
+        <div class="row">
+            <div class="col-12">
+                <nav aria-label="Page navigation">
+                    <ul class="pagination justify-content-center">
+                        {% if artworks.has_previous %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ artworks.previous_page_number }}{% if request.GET.category %}&category={{ request.GET.category }}{% endif %}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}">Previous</a>
+                        </li>
+                        {% endif %}
+
+                        {% for num in artworks.paginator.page_range %}
+                        <li class="page-item {% if artworks.number == num %}active{% endif %}">
+                            <a class="page-link" href="?page={{ num }}{% if request.GET.category %}&category={{ request.GET.category }}{% endif %}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}">{{ num }}</a>
+                        </li>
+                        {% endfor %}
+
+                        {% if artworks.has_next %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ artworks.next_page_number }}{% if request.GET.category %}&category={{ request.GET.category }}{% endif %}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}">Next</a>
+                        </li>
+                        {% endif %}
+                    </ul>
+                </nav>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+$(document).ready(function() {
+    // AJAX filter functionality
+    $('#category_filter, #search').on('change keyup', function() {
+        const category = $('#category_filter').val();
+        const search = $('#search').val();
+        
+        $.get('/artworks', {category: category, search: search}, function(data) {
+            $('#artworks-grid').html(data);
+        });
+    });
+});
+</script>
+{% endblock %}

@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+
+{% block title %}{{ category.name }} - ArtOfSree{% endblock %}
+
+{% block content %}
+<section class="py-5">
+    <div class="container">
+        <div class="row">
+            <div class="col-12 text-center mb-5">
+                <h2 class="section-header">{{ category.name }}</h2>
+                <p class="text-muted">{{ category.description }}</p>
+            </div>
+        </div>
+
+        <!-- Artworks Grid -->
+        <div class="row">
+            {% for artwork in artworks %}
+            <div class="col-md-4 mb-4">
+                <div class="card artwork-card h-100">
+                    <img src="/static/images/{{ artwork.image }}" class="card-img-top" alt="{{ artwork.title }}">
+                    <div class="card-body">
+                        <h5 class="card-title">{{ artwork.title }}</h5>
+                        <p class="card-text text-muted">{{ artwork.category }}</p>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <span class="price-tag">₹{{ artwork.price }}</span>
+                            <span class="badge badge-popularity">★ {{ artwork.popularity_score|floatformat:1 }}</span>
+                        </div>
+                    </div>
+                    <div class="card-footer bg-white">
+                        <a href="/artwork/{{ artwork.id }}" class="btn btn-primary btn-block">View Details</a>
+                    </div>
+                </div>
+            </div>
+            {% empty %}
+            <div class="col-12 text-center py-5">
+                <i class="fas fa-palette fa-3x text-muted mb-3"></i>
+                <h4 class="text-muted">No artworks in this category yet</h4>
+                <p class="text-muted">Check back soon for new creations!</p>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endblock %}

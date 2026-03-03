@@ -5,7 +5,7 @@ from django.shortcuts import get_object_or_404, redirect, render
 from django.views.decorators.http import require_http_methods
 import json
 
-from .forms import PortraitBookingForm, STATE_CITY_MAP, SIZE_DESCRIPTIONS
+from .forms import PortraitBookingForm, INDIA_STATE_DISTRICTS, SIZE_DESCRIPTIONS
 from .models import PortraitBooking, Size
 from django.utils.crypto import get_random_string
 
@@ -59,7 +59,7 @@ def booking_form(request):
 
     context = {
         'form': form,
-        'state_city_map': json.dumps(STATE_CITY_MAP),
+        'state_district_map': json.dumps(INDIA_STATE_DISTRICTS),
         'size_descriptions': json.dumps(SIZE_DESCRIPTIONS)
     }
     return render(request, 'booking.html', context)
@@ -125,7 +125,7 @@ def portrait_booking(request):
 
     context = {
         'form': form,
-        'state_city_map': json.dumps(STATE_CITY_MAP),
+        'state_district_map': json.dumps(INDIA_STATE_DISTRICTS),
         'size_descriptions': json.dumps(SIZE_DESCRIPTIONS)
     }
     return render(request, 'booking.html', context)
@@ -157,11 +157,11 @@ def size_reference_images(request):
 
 
 @require_http_methods(["GET"])
-def get_cities_by_state(request):
-    """API endpoint to get cities for a selected state"""
+def get_districts_by_state(request):
+    """API endpoint to get districts for a selected state"""
     state = request.GET.get('state', '')
-    cities = STATE_CITY_MAP.get(state, [])
-    return JsonResponse({'cities': cities})
+    districts = INDIA_STATE_DISTRICTS.get(state, [])
+    return JsonResponse({'districts': districts})
 
 
 @login_required

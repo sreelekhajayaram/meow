@@ -13,22 +13,15 @@ class MakePaymentForm(forms.Form):
     stripe_id = forms.CharField(widget=forms.HiddenInput)
 
 
-
-
 class ShippingAddressForm(forms.ModelForm):
     class Meta:
         model = UserAddress
         widgets = {'address_type': forms.HiddenInput()}
-        fields = ['full_name', 'address1', 'address2', 'city', 'country', 'postal_code', 'phone_number', 'address_type']
+        fields = ['full_name', 'address1', 'address2', 'district', 'country', 'postal_code', 'phone_number', 'address_type']
 
 
 class BillingAddressForm(forms.ModelForm):
     class Meta:
         model = UserAddress
         widgets = {'address_type': forms.HiddenInput()}
-        fields = ['full_name', 'address1', 'address2', 'city', 'country', 'postal_code', 'phone_number', 'address_type']
-        
-
-
-
-
+        fields = ['full_name', 'address1', 'address2', 'district', 'country', 'postal_code', 'phone_number', 'address_type']
