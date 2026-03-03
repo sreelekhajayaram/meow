@@ -1,1 +1,1 @@
-web: gunicorn artstore.wsgi:application
+web: python manage.py collectstatic --noinput; gunicorn artstore.wsgi:application
