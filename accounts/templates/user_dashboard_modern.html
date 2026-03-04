@@ -674,6 +674,279 @@
         .section-header { flex-direction: column; align-items: flex-start; gap: 1rem; }
         .topbar-profile .name { display: none; }
     }
+    
+    /* ===== PORTRAIT PREVIEW SIMULATOR BUTTON ===== */
+    .btn-preview-simulator {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 0.6rem 1.2rem;
+        background: linear-gradient(135deg, #9b59b6 0%, #8e44ad 100%);
+        color: #fff;
+        border: none;
+        border-radius: var(--radius-sm);
+        font-weight: 600;
+        cursor: pointer;
+        transition: var(--transition-smooth);
+        text-decoration: none;
+        font-size: 0.85rem;
+    }
+    
+    .btn-preview-simulator:hover {
+        background: linear-gradient(135deg, #a569c9 0%, #9b59b6 100%);
+        transform: translateY(-2px);
+        box-shadow: 0 4px 15px rgba(155, 89, 182, 0.4);
+        color: #fff;
+    }
+    
+    /* ===== MODAL STYLES ===== */
+    .preview-modal-overlay {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.6);
+        z-index: 9999;
+        justify-content: center;
+        align-items: center;
+        backdrop-filter: blur(5px);
+    }
+    
+    .preview-modal-overlay.active {
+        display: flex;
+    }
+    
+    .preview-modal {
+        background: var(--bg-card);
+        border-radius: var(--radius-lg);
+        width: 90%;
+        max-width: 600px;
+        max-height: 90vh;
+        overflow-y: auto;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        animation: modalSlideIn 0.3s ease;
+    }
+    
+    @keyframes modalSlideIn {
+        from {
+            opacity: 0;
+            transform: translateY(-30px) scale(0.95);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+        }
+    }
+    
+    .preview-modal-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 1.5rem;
+        border-bottom: 1px solid var(--border-subtle);
+    }
+    
+    .preview-modal-title {
+        font-family: 'Playfair Display', serif;
+        font-size: 1.3rem;
+        font-weight: 600;
+        color: var(--text-primary);
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+    
+    .preview-modal-title i {
+        color: #9b59b6;
+    }
+    
+    .preview-modal-close {
+        background: none;
+        border: none;
+        font-size: 1.5rem;
+        color: var(--text-muted);
+        cursor: pointer;
+        transition: var(--transition-smooth);
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    
+    .preview-modal-close:hover {
+        background: var(--bg-hover);
+        color: var(--text-primary);
+    }
+    
+    .preview-modal-body {
+        padding: 1.5rem;
+    }
+    
+    .preview-form-group {
+        margin-bottom: 1.5rem;
+    }
+    
+    .preview-form-label {
+        display: block;
+        font-size: 0.85rem;
+        font-weight: 600;
+        color: var(--text-secondary);
+        margin-bottom: 0.5rem;
+    }
+    
+    .preview-form-select {
+        width: 100%;
+        padding: 0.75rem 1rem;
+        border: 1px solid var(--border-light);
+        border-radius: var(--radius-sm);
+        font-size: 0.95rem;
+        color: var(--text-primary);
+        background: var(--bg-card);
+        cursor: pointer;
+        transition: var(--transition-smooth);
+    }
+    
+    .preview-form-select:focus {
+        outline: none;
+        border-color: #9b59b6;
+        box-shadow: 0 0 0 3px rgba(155, 89, 182, 0.1);
+    }
+    
+    /* ===== PREVIEW CONTAINER ===== */
+    .preview-wrapper {
+        background: var(--bg-dark);
+        border-radius: var(--radius-md);
+        padding: 1.5rem;
+        text-align: center;
+        border: 1px solid var(--border-subtle);
+    }
+    
+    .preview-image-container {
+        display: inline-block;
+        overflow: hidden;
+        border-radius: var(--radius-sm);
+        transition: all 0.3s ease;
+    }
+    
+    .preview-image {
+        max-width: 100%;
+        height: auto;
+        display: block;
+        transition: all 0.3s ease;
+    }
+    
+    /* ===== CATEGORY FILTER LOGIC ===== */
+    /* Caricature: Cartoon effect with high contrast and saturation */
+    .preview-image.category-caricature {
+        filter: contrast(120%) saturate(150%);
+        transform: scale(1.05);
+    }
+    
+    /* Pen Art: Blue tone effect using grayscale + sepia + hue rotation */
+    .preview-image.category-pen-art {
+        filter: grayscale(100%) sepia(100%) hue-rotate(200deg);
+    }
+    
+    /* Painting: No filter - natural colors */
+    .preview-image.category-painting {
+        filter: none;
+    }
+    
+    /* Pencil Drawing: Soft grayscale with slight contrast */
+    .preview-image.category-pencil-drawing {
+        filter: grayscale(100%) contrast(110%);
+    }
+    
+    /* Stencil Art: Strong black & white with high contrast */
+    .preview-image.category-stencil-art {
+        filter: grayscale(100%) contrast(200%);
+    }
+    
+    /* ===== FRAME BORDER LOGIC ===== */
+    /* Plastic Frame: Simple black border */
+    .preview-image-container.frame-plastic {
+        border: 5px solid black;
+    }
+    
+    /* Wooden Frame: Brown border */
+    .preview-image-container.frame-wooden {
+        border: 8px solid #8B4513;
+    }
+    
+    /* Metal Frame: Gray border */
+    .preview-image-container.frame-metal {
+        border: 6px solid gray;
+    }
+    
+    /* Premium Wooden: Dark brown with shadow */
+    .preview-image-container.frame-premium-wooden {
+        border: 10px solid #5C4033;
+        box-shadow: 0px 0px 15px rgba(0,0,0,0.5);
+    }
+    
+    /* Vintage Gold: Gold border with glow effect */
+    .preview-image-container.frame-vintage-gold {
+        border: 10px solid gold;
+        box-shadow: 0px 0px 20px rgba(218,165,32,0.6);
+    }
+    
+    /* Matte Black: Dark black border */
+    .preview-image-container.frame-matte-black {
+        border: 8px solid #111;
+    }
+    
+    /* ===== DARK MODE COMPATIBILITY ===== */
+    body.dark-mode .preview-modal {
+        background: #1e1e1e;
+        border-color: #333;
+    }
+    
+    body.dark-mode .preview-modal-header {
+        border-color: #333;
+    }
+    
+    body.dark-mode .preview-modal-title {
+        color: #e0e0e0;
+    }
+    
+    body.dark-mode .preview-form-label {
+        color: #aaa;
+    }
+    
+    body.dark-mode .preview-form-select {
+        background: #2d2d2d;
+        border-color: #444;
+        color: #e0e0e0;
+    }
+    
+    body.dark-mode .preview-wrapper {
+        background: #2d2d2d;
+        border-color: #333;
+    }
+    
+    /* ===== RESPONSIVE MODAL ===== */
+    @media (max-width: 576px) {
+        .preview-modal {
+            width: 95%;
+            max-height: 85vh;
+        }
+        
+        .preview-modal-header {
+            padding: 1rem;
+        }
+        
+        .preview-modal-body {
+            padding: 1rem;
+        }
+        
+        .preview-wrapper {
+            padding: 1rem;
+        }
+    }
 </style>
 
 <div class="dashboard-wrapper">
@@ -749,7 +1022,14 @@
             <section class="section" id="bookings">
                 <div class="section-header">
                     <h2 class="section-title">Portrait Booking Status</h2>
-                    <a href="{% url 'booking' %}" class="section-link">Book New Portrait</a>
+                    <div>
+                        {% if bookings %}
+                        <a href="javascript:void(0)" class="btn-preview-simulator" onclick="openPreviewModal()">
+                            <i class="fas fa-palette"></i> View Portrait Preview Simulator
+                        </a>
+                        {% endif %}
+                        <a href="{% url 'booking' %}" class="section-link" style="margin-left: {% if bookings %}15px{% else %}0{% endif %};">Book New Portrait</a>
+                    </div>
                 </div>
                 {% if bookings %}
                 <div class="booking-status-grid">
@@ -839,6 +1119,63 @@
     </main>
 </div>
 
+<!-- ============================================================ -->
+<!-- PORTRAIT PREVIEW SIMULATOR MODAL -->
+<!-- ============================================================ -->
+<div class="preview-modal-overlay" id="previewModal">
+    <div class="preview-modal">
+        <div class="preview-modal-header">
+            <h3 class="preview-modal-title">
+                <i class="fas fa-palette"></i> Portrait Preview Simulator
+            </h3>
+            <button class="preview-modal-close" onclick="closePreviewModal()" aria-label="Close modal">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div class="preview-modal-body">
+            <!-- Category Dropdown -->
+            <div class="preview-form-group">
+                <label for="categorySelect" class="preview-form-label">
+                    <i class="fas fa-artstation mr-2"></i>Category
+                </label>
+                <select id="categorySelect" class="preview-form-select">
+                    <option value="painting" selected>Painting</option>
+                    <option value="caricature">Caricature</option>
+                    <option value="pen-art">Pen Art</option>
+                    <option value="pencil-drawing">Pencil Drawing</option>
+                    <option value="stencil-art">Stencil Art</option>
+                </select>
+            </div>
+            
+            <!-- Frame Type Dropdown -->
+            <div class="preview-form-group">
+                <label for="frameSelect" class="preview-form-label">
+                    <i class="fas fa-border-all mr-2"></i>Frame Type
+                </label>
+                <select id="frameSelect" class="preview-form-select">
+                    <option value="plastic" selected>Plastic</option>
+                    <option value="wooden">Wooden</option>
+                    <option value="metal">Metal</option>
+                    <option value="premium-wooden">Premium Wooden</option>
+                    <option value="vintage-gold">Vintage Gold</option>
+                    <option value="matte-black">Matte Black</option>
+                </select>
+            </div>
+            
+            <!-- Preview Container -->
+            <div class="preview-wrapper">
+                <div class="preview-image-container" id="previewImageContainer">
+                    <!-- Placeholder portrait image - using a sample image from picsum -->
+                    <img src="https://picsum.photos/seed/portrait/400/500" 
+                         alt="Portrait Preview" 
+                         class="preview-image" 
+                         id="previewImage">
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
 <script>
 function toggleSidebar(){
     document.getElementById('sidebar').classList.toggle('show');
@@ -855,6 +1192,125 @@ document.querySelectorAll('.nav-item[href^="#"]').forEach(function(link){
 document.addEventListener('click',function(e){
     if(window.innerWidth<=768&&!document.getElementById('sidebar').contains(e.target)&&!document.querySelector('.menu-toggle').contains(e.target))
         document.getElementById('sidebar').classList.remove('show')
+});
+
+// ============================================================
+// LIVE PORTRAIT PREVIEW SIMULATOR
+// ============================================================
+
+/**
+ * Open the preview modal
+ */
+function openPreviewModal() {
+    const modal = document.getElementById('previewModal');
+    if (modal) {
+        modal.classList.add('active');
+        document.body.style.overflow = 'hidden';
+    }
+}
+
+/**
+ * Close the preview modal
+ */
+function closePreviewModal() {
+    const modal = document.getElementById('previewModal');
+    if (modal) {
+        modal.classList.remove('active');
+        document.body.style.overflow = '';
+    }
+}
+
+// Close modal when clicking outside
+document.addEventListener('click', function(e) {
+    const modal = document.getElementById('previewModal');
+    if (modal && e.target === modal) {
+        closePreviewModal();
+    }
+});
+
+// Close modal with Escape key
+document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') {
+        closePreviewModal();
+    }
+});
+
+/**
+ * Apply category filter effect to preview image
+ * CATEGORY FILTER LOGIC:
+ * - Caricature: contrast(120%) saturate(150%) + scale(1.05) for cartoon effect
+ * - Pen Art: grayscale(100%) sepia(100%) hue-rotate(200deg) for blue tone
+ * - Painting: no filter (natural colors)
+ * - Pencil Drawing: grayscale(100%) contrast(110%) for soft gray
+ * - Stencil Art: grayscale(100%) contrast(200%) for strong B&W
+ */
+function applyCategoryFilter(category) {
+    const previewImage = document.getElementById('previewImage');
+    if (!previewImage) return;
+    
+    // Remove all category classes first
+    previewImage.classList.remove(
+        'category-caricature',
+        'category-pen-art',
+        'category-painting',
+        'category-pencil-drawing',
+        'category-stencil-art'
+    );
+    
+    // Add the selected category class
+    if (category && category !== 'painting') {
+        const className = 'category-' + category.toLowerCase().replace(/\s+/g, '-');
+        previewImage.classList.add(className);
+    }
+}
+
+/**
+ * Apply frame border style to preview container
+ * FRAME BORDER LOGIC:
+ * - Plastic: 5px solid black
+ * - Wooden: 8px solid #8B4513
+ * - Metal: 6px solid gray
+ * - Premium Wooden: 10px solid #5C4033 + box-shadow
+ * - Vintage Gold: 10px solid gold + gold glow
+ * - Matte Black: 8px solid #111
+ */
+function applyFrameStyle(frameType) {
+    const previewContainer = document.getElementById('previewImageContainer');
+    if (!previewContainer) return;
+    
+    // Remove all frame classes first
+    previewContainer.classList.remove(
+        'frame-plastic',
+        'frame-wooden',
+        'frame-metal',
+        'frame-premium-wooden',
+        'frame-vintage-gold',
+        'frame-matte-black'
+    );
+    
+    // Add the selected frame class
+    if (frameType) {
+        const className = 'frame-' + frameType.toLowerCase().replace(/\s+/g, '-');
+        previewContainer.classList.add(className);
+    }
+}
+
+// Add event listeners for dropdown changes
+document.addEventListener('DOMContentLoaded', function() {
+    const categorySelect = document.getElementById('categorySelect');
+    const frameSelect = document.getElementById('frameSelect');
+    
+    if (categorySelect) {
+        categorySelect.addEventListener('change', function() {
+            applyCategoryFilter(this.value);
+        });
+    }
+    
+    if (frameSelect) {
+        frameSelect.addEventListener('change', function() {
+            applyFrameStyle(this.value);
+        });
+    }
 });
 </script>
 
