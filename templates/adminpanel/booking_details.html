@@ -37,6 +37,11 @@
             <div class="mb-3">
               <strong>Size:</strong> {{ booking.size }}
             </div>
+            {% if booking.frame_type %}
+            <div class="mb-3">
+              <strong>Frame Type:</strong> {{ booking.frame_type }}
+            </div>
+            {% endif %}
             <div class="mb-3">
               <strong>Price:</strong> ₹{{ booking.price }}
             </div>

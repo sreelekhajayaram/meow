@@ -41,6 +41,11 @@ def dashboard(request):
     latest_bookings = latest_bookings[:5]
 
     recent_users = User.objects.order_by('-date_joined')[:5]
+    
+    # Get latest feedbacks for dashboard
+    latest_feedbacks = Feedback.objects.select_related('user').order_by('-created_at')[:5]
+    pending_feedbacks_count = Feedback.objects.filter(is_approved=False).count()
+    
     return render(request, 'adminpanel/dashboard.html', {
         'stats': data,
         'latest_orders': latest_orders,
@@ -50,6 +55,8 @@ def dashboard(request):
         'booking_status_filter': booking_status_filter,
         'order_status_choices': Order.ORDER_STATUS_CHOICES,
         'booking_status_choices': PortraitBooking.BOOKING_STATUS_CHOICES,
+        'latest_feedbacks': latest_feedbacks,
+        'pending_feedbacks_count': pending_feedbacks_count,
     })
 
 

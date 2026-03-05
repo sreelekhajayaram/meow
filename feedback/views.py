@@ -97,35 +97,47 @@ def feedback_list(request):
 
 @login_required(login_url='login')
 def delete_feedback(request, feedback_id):
-    """Delete feedback - only user can delete their own feedback."""
+    """Delete feedback - only user with specific email can delete feedback."""
     feedback = get_object_or_404(Feedback, id=feedback_id)
-
-    # Check if the user owns this feedback based on email
-    if feedback.email != request.user.email:
-        messages.error(request, '❌ You can only delete your own feedback.')
+    
+    # Allow delete only for specific Gmail account (add your email here)
+    ALLOWED_EDIT_EMAIL = 'admin123@gmail.com'  # Change this to the specific Gmail account
+    
+    # Check if user has the specific allowed email OR is a staff member
+    user_email = request.user.email.lower() if request.user.email else ''
+    is_allowed_user = user_email == ALLOWED_EDIT_EMAIL.lower() or request.user.is_staff
+    
+    if not is_allowed_user:
+        messages.error(request, '❌ You do not have permission to delete feedback.')
         return redirect('feedback:feedback_list')
 
     # Delete the feedback
     feedback.delete()
-    messages.success(request, '✓ Your feedback has been deleted successfully.')
+    messages.success(request, '✓ The feedback has been deleted successfully.')
     return redirect('feedback:feedback_list')
 
 
 @login_required(login_url='login')
 def edit_feedback(request, feedback_id):
-    """Edit feedback - only user can edit their own feedback."""
+    """Edit feedback - only user with specific email can edit feedback."""
     feedback = get_object_or_404(Feedback, id=feedback_id)
-
-    # Check if the user owns this feedback based on email
-    if feedback.email != request.user.email:
-        messages.error(request, '❌ You can only edit your own feedback.')
+    
+    # Allow edit only for specific Gmail account (add your email here)
+    ALLOWED_EDIT_EMAIL = 'admin123@gmail.com'  # Change this to the specific Gmail account
+    
+    # Check if user has the specific allowed email OR is a staff member
+    user_email = request.user.email.lower() if request.user.email else ''
+    is_allowed_user = user_email == ALLOWED_EDIT_EMAIL.lower() or request.user.is_staff
+    
+    if not is_allowed_user:
+        messages.error(request, '❌ You do not have permission to edit feedback.')
         return redirect('feedback:feedback_list')
 
     if request.method == 'POST':
         form = FeedbackForm(request.POST, instance=feedback)
         if form.is_valid():
             form.save()
-            messages.success(request, '✓ Your feedback has been updated successfully.')
+            messages.success(request, '✓ The feedback has been updated successfully.')
             return redirect('feedback:feedback_list')
     else:
         form = FeedbackForm(instance=feedback)

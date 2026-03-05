@@ -44,6 +44,32 @@ INDIAN_STATES = [
     ('West Bengal','West Bengal'),
 ]
 
+# ============================================================
+# FRAME CHOICES - Part 1
+# ============================================================
+FRAME_CHOICES = [
+    ('', 'Select Frame Type'),
+    ('Plastic', 'Plastic'),
+    ('Wooden', 'Wooden'),
+    ('Metal', 'Metal'),
+    ('Premium Wooden', 'Premium Wooden'),
+    ('Vintage Gold', 'Vintage Gold'),
+    ('Matte Black', 'Matte Black'),
+]
+
+# ============================================================
+# CATEGORY CHOICES - Part 2
+# Updated to: Caricature, Pen Art, Painting, Pencil Drawing, Stencil Art
+# ============================================================
+CATEGORY_CHOICES = [
+    ('', 'Select Category'),
+    ('caricature', 'Caricature'),
+    ('pen_art', 'Pen Art'),
+    ('paintings', 'Painting'),
+    ('pencil', 'Pencil Drawing'),
+    ('stencil', 'Stencil Art'),
+]
+
 # State-District Mapping for dynamic dropdown (All Indian Districts)
 INDIA_STATE_DISTRICTS = {
     'Andhra Pradesh': [
@@ -279,7 +305,7 @@ INDIA_STATE_DISTRICTS = {
         "Almora","Bageshwar","Chamoli","Champawat",
         "Dehradun","Haridwar","Nainital",
         "Pauri Garhwal","Pithoragarh","Rudraprayag",
-        "Tehri Garhwal","Udham Singh Nagar","Uttarkashi"
+        "Tehri Garhwal","Udham Singh Nagar","UTTARKASHI"
     ],
     'West Bengal': [
         "Alipurduar","Bankura","Birbhum","Cooch Behar",
@@ -358,14 +384,15 @@ class PortraitBookingForm(forms.ModelForm):
         })
     )
 
-
     class Meta:
         model = PortraitBooking
-        # Removed 'preferred_date' field as per requirement
+        # ============================================================
+        # ADDED 'frame_type' - Part 1
+        # ============================================================
         fields = [
             'name', 'email', 'phone',
             'address', 'state', 'district', 'pincode',
-            'category', 'size', 'reference_image', 'description', 'price'
+            'category', 'size', 'frame_type', 'reference_image', 'description', 'price'
         ]
         widgets = {
             'name': forms.TextInput(attrs={
@@ -425,6 +452,16 @@ class PortraitBookingForm(forms.ModelForm):
                     'id': 'sizeSelect'
                 }
             ),
+            # ============================================================
+            # NEW: Frame type dropdown widget - Part 1
+            # ============================================================
+            'frame_type': forms.Select(
+                choices=FRAME_CHOICES,
+                attrs={
+                    'class': 'form-control form-control-lg',
+                    'id': 'frameTypeSelect'
+                }
+            ),
             'price': forms.HiddenInput(attrs={'id': 'priceInput'}),
             'total_price': forms.NumberInput(attrs={
                 'class': 'form-control form-control-lg',
@@ -439,7 +476,6 @@ class PortraitBookingForm(forms.ModelForm):
         super().__init__(*args, **kwargs)
 
         # Update district field to be a select with dynamic options
-        # Include all districts from INDIA_STATE_DISTRICTS for validation
         all_districts = [('', 'Select District')]
         for districts in INDIA_STATE_DISTRICTS.values():
             for district in districts:
@@ -455,26 +491,12 @@ class PortraitBookingForm(forms.ModelForm):
             required=True
         )
 
-        # Configure category field with dynamic choices from Category model
-        # Apply custom ordering: Paintings, Mural Paintings, Stencil Artworks, Pencil Drawings, Pen Art, then others (caricature last)
-        category_order = {
-            'paintings': 1,
-            'mural': 2,
-            'stencil': 3,
-            'pencil': 4,
-            'pen_art': 5,
-            'ghibli_art': 99,  # Second to last
-            'caricature': 100,  # Last
-        }
-        
-        def get_sort_key(cat):
-            """Return sort key: defined categories get explicit order, others get high order"""
-            return category_order.get(cat.name, 100)
-        
-        sorted_categories = sorted(Category.objects.all(), key=get_sort_key)
-        category_choices = [(cat.name, cat.get_name_display()) for cat in sorted_categories]
+        # ============================================================
+        # UPDATED Category field - Part 2
+        # Using fixed CATEGORY_CHOICES instead of dynamic from model
+        # ============================================================
         self.fields['category'] = forms.ChoiceField(
-            choices=[('', 'Select Category')] + category_choices,
+            choices=CATEGORY_CHOICES,
             widget=forms.Select(attrs={
                 'class': 'form-control form-control-lg',
                 'id': 'categorySelect'
@@ -488,7 +510,7 @@ class PortraitBookingForm(forms.ModelForm):
             self.fields['email'].widget.attrs['readonly'] = True
             self.fields['email'].widget.attrs['class'] = 'form-control form-control-lg bg-light'
 
-        # Make reference_image required as per user requirement
+        # Make reference_image required
         self.fields['reference_image'].required = True
 
         # Add labels with proper formatting
@@ -501,10 +523,21 @@ class PortraitBookingForm(forms.ModelForm):
         self.fields['pincode'].label = 'PIN Code'
         self.fields['reference_image'].label = 'Upload Reference Image'
         self.fields['size'].label = 'Artwork Size'
+        # ============================================================
+        # UPDATED: Category label - Part 2
+        # ============================================================
         self.fields['category'].label = 'Artwork Category'
+        # ============================================================
+        # NEW: Frame type label - Part 1
+        # ============================================================
+        self.fields['frame_type'].label = 'Select Frame Type'
         self.fields['description'].label = 'Additional Details'
         self.fields['total_price'].label = 'Total Price (₹)'
 
         # Add help text
         self.fields['pincode'].help_text = '6-digit postal code'
         self.fields['reference_image'].help_text = 'Upload a clear reference image (JPG, PNG)'
+        # ============================================================
+        # NEW: Frame type help text - Part 1
+        # ============================================================
+        self.fields['frame_type'].help_text = 'Choose your preferred frame type'

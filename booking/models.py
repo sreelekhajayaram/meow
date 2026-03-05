@@ -9,6 +9,30 @@ import django.utils.timezone
 
 
 class PortraitBooking(models.Model):
+    # ============================================================
+    # FRAME TYPE CHOICES - Added for Part 1
+    # ============================================================
+    FRAME_CHOICES = [
+        ('Plastic', 'Plastic'),
+        ('Wooden', 'Wooden'),
+        ('Metal', 'Metal'),
+        ('Premium Wooden', 'Premium Wooden'),
+        ('Vintage Gold', 'Vintage Gold'),
+        ('Matte Black', 'Matte Black'),
+    ]
+    
+    # ============================================================
+    # UPDATED CATEGORY CHOICES - Part 2
+    # Now includes: Caricature, Pen Art, Painting, Pencil Drawing, Stencil Art
+    # ============================================================
+    CATEGORY_CHOICES = [
+        ('caricature', 'Caricature'),
+        ('pen_art', 'Pen Art'),
+        ('paintings', 'Painting'),
+        ('pencil', 'Pencil Drawing'),
+        ('stencil', 'Stencil Art'),
+    ]
+    
     name = models.CharField(max_length=150)
     email = models.EmailField(max_length=254)
     phone = models.CharField(max_length=20)
@@ -16,16 +40,18 @@ class PortraitBooking(models.Model):
     district = models.CharField(max_length=120)
     state = models.CharField(max_length=120)
     pincode = models.CharField(max_length=15)
-    # Categories for portrait booking (keeps stored value simple)
-    CATEGORY_CHOICES = [
-        ('paintings', 'Paintings'),
-        ('pencil', 'Pencil Drawings'),
-        ('caricature', 'Caricatures'),
-        ('stencil', 'Stencil Artworks'),
-        ('mural', 'Kerala Mural'),
-        ('pen_art', 'Pen Art'),
-        ('ghibli_art', 'Ghibli Art'),
-    ]
+    
+    # ============================================================
+    # NEW FIELD: frame_type - Part 1
+    # ============================================================
+    frame_type = models.CharField(
+        max_length=50, 
+        choices=FRAME_CHOICES, 
+        blank=True, 
+        default='',
+        help_text="Select frame type for your portrait"
+    )
+    
     category = models.CharField(max_length=50, choices=CATEGORY_CHOICES, default='paintings')
     reference_image = models.ImageField(upload_to='bookings/', blank=True, null=True)
     description = models.TextField(blank=True)

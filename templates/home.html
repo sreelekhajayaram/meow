@@ -77,8 +77,8 @@
                     border-radius: 5px;
                     bottom: 20px;
                 }
-                .category-carousel .carousel-control-prev,
-                .category-carousel .carousel-control-next {
+                .carousel-control-prev,
+                .carousel-control-next {
                     background: rgba(0, 0, 0, 0.3);
                     border-radius: 50%;
                     width: 45px;
@@ -86,8 +86,8 @@
                     top: 50%;
                     transform: translateY(-50%);
                 }
-                .category-carousel .carousel-control-prev:hover,
-                .category-carousel .carousel-control-next:hover {
+                .carousel-control-prev:hover,
+                .carousel-control-next:hover {
                     background: rgba(0, 0, 0, 0.5);
                 }
             </style>
@@ -173,10 +173,268 @@
     </div>
 </section>
 
+{% comment %}
+=================================================================
+AI PORTRAIT INSIGHTS SECTION - SLR & MLR IMPLEMENTATION
+=================================================================
+This section is visible ONLY for logged-in users.
+It includes:
+- Simple Linear Regression (SLR): Predict Completion Time
+- Multiple Linear Regression (MLR): Predict Delivery Date
+=================================================================
+{% endcomment %}
+
+{% if user.is_authenticated %}
+<div id="ai-insights" class="ai-insights-section container my-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="text-center mb-4">
+                <h2 class="h3 ai-insights-title">🎨 AI Portrait Insights</h2>
+                <p class="text-muted">Smart predictions for your portrait orders</p>
+            </div>
+            
+            <div class="row">
+                <!-- SLR Card - Predict Completion Time -->
+                <div class="col-md-6 mb-4">
+                    <div class="ai-card slr-card h-100">
+                        <div class="ai-card-icon">
+                            <i class="fas fa-clock"></i>
+                        </div>
+                        <h4 class="ai-card-title">Predict Completion Time</h4>
+                        <p class="ai-card-desc">Estimate how many days your portrait will take based on number of faces.</p>
+                        <button class="btn btn-ai-primary" onclick="openSLRModal()">
+                            <i class="fas fa-calculator mr-2"></i>Open Predictor
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- MLR Card - Predict Delivery Date -->
+                <div class="col-md-6 mb-4">
+                    <div class="ai-card mlr-card h-100">
+                        <div class="ai-card-icon">
+                            <i class="fas fa-calendar-check"></i>
+                        </div>
+                        <h4 class="ai-card-title">Predict Delivery Date</h4>
+                        <p class="ai-card-desc">Get your expected delivery date based on multiple factors.</p>
+                        <button class="btn btn-ai-secondary" onclick="openMLRModal()">
+                            <i class="fas fa-calendar-alt mr-2"></i>Open Predictor
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- SLR Modal - Simple Linear Regression -->
+<div id="slrModal" class="ai-modal">
+    <div class="ai-modal-content">
+        <span class="ai-modal-close" onclick="closeSLRModal()">&times;</span>
+        <h3 class="ai-modal-title">🎯 AI Completion Time Predictor</h3>
+        <p class="ai-modal-subtitle">Simple Linear Regression Model</p>
+        
+        <div class="ai-form-group">
+            <label for="slrFaces">Number of Faces:</label>
+            <input type="number" id="slrFaces" class="ai-input" min="1" placeholder="Enter number of faces (min: 1)">
+            <small class="ai-input-hint">Enter a value between 1 and 20</small>
+        </div>
+        
+        <button class="btn btn-ai-primary btn-block" onclick="calculateSLR()">
+            <i class="fas fa-magic mr-2"></i>Predict Completion Time
+        </button>
+        
+        <div id="slrResult" class="ai-result-card" style="display: none;">
+            <h5 class="ai-result-title">Estimated Completion Time</h5>
+            <p class="ai-result-value" id="slrOutput">0 Days</p>
+            <small class="ai-result-note">This is an AI-based estimated value. Actual time may vary.</small>
+        </div>
+    </div>
+</div>
+
+<!-- MLR Modal - Multiple Linear Regression -->
+<div id="mlrModal" class="ai-modal">
+    <div class="ai-modal-content">
+        <span class="ai-modal-close" onclick="closeMLRModal()">&times;</span>
+        <h3 class="ai-modal-title">📅 AI Delivery Date Predictor</h3>
+        <p class="ai-modal-subtitle">Multiple Linear Regression Model</p>
+        
+        <div class="ai-form-group">
+            <label for="mlrFaces">Number of Faces:</label>
+            <input type="number" id="mlrFaces" class="ai-input" min="1" placeholder="Enter number of faces">
+        </div>
+        
+        <div class="ai-form-group">
+            <label for="mlrSize">Canvas Size:</label>
+            <select id="mlrSize" class="ai-select">
+                <option value="0">A4</option>
+                <option value="1">A3</option>
+                <option value="2">A2</option>
+            </select>
+        </div>
+        
+        <div class="ai-form-group">
+            <label for="mlrBackground">Background Complexity:</label>
+            <select id="mlrBackground" class="ai-select">
+                <option value="0">Simple</option>
+                <option value="1">Medium</option>
+                <option value="2">Detailed</option>
+            </select>
+        </div>
+        
+        <div class="ai-form-group">
+            <label for="mlrRush">Rush Order:</label>
+            <select id="mlrRush" class="ai-select">
+                <option value="0">No</option>
+                <option value="-2">Yes</option>
+            </select>
+        </div>
+        
+        <button class="btn btn-ai-secondary btn-block" onclick="calculateMLR()">
+            <i class="fas fa-magic mr-2"></i>Predict Delivery Date
+        </button>
+        
+        <div id="mlrResult" class="ai-result-card ai-result-green" style="display: none;">
+            <h5 class="ai-result-title">Expected Delivery Date</h5>
+            <p class="ai-result-value" id="mlrOutput">-</p>
+            <small class="ai-result-note">This is an AI-based estimated value. Actual delivery may vary.</small>
+        </div>
+    </div>
+</div>
+{% endif %}
+
 {% endblock %}
 
 {% block extra_js %}
 <script>
+    // ============================================================
+    // AI PORTRAIT INSIGHTS - JAVASCRIPT IMPLEMENTATION
+    // ============================================================
+    
+    // ------------------------------------------------------------
+    // SIMPLE LINEAR REGRESSION (SLR) IMPLEMENTATION
+    // ------------------------------------------------------------
+    // Model: Y = 2 + (2 × Number_of_Faces)
+    // Where Y = Completion Days
+    // Coefficients are predefined for mini project simulation
+    // ------------------------------------------------------------
+    
+    function openSLRModal() {
+        document.getElementById('slrModal').style.display = 'block';
+        document.body.style.overflow = 'hidden';
+    }
+    
+    function closeSLRModal() {
+        document.getElementById('slrModal').style.display = 'none';
+        document.body.style.overflow = 'auto';
+        document.getElementById('slrFaces').value = '';
+        document.getElementById('slrResult').style.display = 'none';
+    }
+    
+    function calculateSLR() {
+        var faces = document.getElementById('slrFaces').value;
+        
+        if (faces === '' || faces === null) {
+            alert('Please enter the number of faces.');
+            return;
+        }
+        
+        var facesNum = parseInt(faces);
+        
+        if (facesNum < 1) {
+            alert('Number of faces must be at least 1.');
+            return;
+        }
+        
+        if (facesNum > 20) {
+            alert('Number of faces cannot exceed 20. Please contact us for larger orders.');
+            return;
+        }
+        
+        // SLR Formula: Y = 2 + (2 × Number_of_Faces)
+        var completionDays = 2 + (2 * facesNum);
+        
+        document.getElementById('slrOutput').textContent = completionDays + ' Days';
+        document.getElementById('slrResult').style.display = 'block';
+    }
+    
+    // ------------------------------------------------------------
+    // MULTIPLE LINEAR REGRESSION (MLR) IMPLEMENTATION
+    // ------------------------------------------------------------
+    // Model: Total Days = 2 + (2 × Faces) + Size Value + Background Value + Rush Adjustment
+    // Canvas Size: A4=0, A3=1, A2=2
+    // Background: Simple=0, Medium=1, Detailed=2
+    // Rush Order: Yes=-2, No=0
+    // Coefficients are predefined for mini project simulation
+    // ------------------------------------------------------------
+    
+    function openMLRModal() {
+        document.getElementById('mlrModal').style.display = 'block';
+        document.body.style.overflow = 'hidden';
+    }
+    
+    function closeMLRModal() {
+        document.getElementById('mlrModal').style.display = 'none';
+        document.body.style.overflow = 'auto';
+        document.getElementById('mlrFaces').value = '';
+        document.getElementById('mlrSize').selectedIndex = 0;
+        document.getElementById('mlrBackground').selectedIndex = 0;
+        document.getElementById('mlrRush').selectedIndex = 0;
+        document.getElementById('mlrResult').style.display = 'none';
+    }
+    
+    function calculateMLR() {
+        var faces = document.getElementById('mlrFaces').value;
+        var size = document.getElementById('mlrSize').value;
+        var background = document.getElementById('mlrBackground').value;
+        var rush = document.getElementById('mlrRush').value;
+        
+        if (faces === '' || faces === null) {
+            alert('Please enter the number of faces.');
+            return;
+        }
+        
+        var facesNum = parseInt(faces);
+        
+        if (facesNum < 1) {
+            alert('Number of faces must be at least 1.');
+            return;
+        }
+        
+        var sizeNum = parseInt(size);
+        var backgroundNum = parseInt(background);
+        var rushNum = parseInt(rush);
+        
+        // MLR Formula: Total Days = 2 + (2 × Faces) + Size + Background + Rush
+        var totalDays = 2 + (2 * facesNum) + sizeNum + backgroundNum + rushNum;
+        
+        if (totalDays < 1) {
+            totalDays = 1;
+        }
+        
+        var today = new Date();
+        var deliveryDate = new Date(today);
+        deliveryDate.setDate(today.getDate() + totalDays);
+        
+        var options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+        var formattedDate = deliveryDate.toLocaleDateString('en-US', options);
+        
+        document.getElementById('mlrOutput').textContent = formattedDate;
+        document.getElementById('mlrResult').style.display = 'block';
+    }
+    
+    // Close modal when clicking outside
+    window.onclick = function(event) {
+        var slrModal = document.getElementById('slrModal');
+        var mlrModal = document.getElementById('mlrModal');
+        
+        if (event.target === slrModal) {
+            closeSLRModal();
+        }
+        if (event.target === mlrModal) {
+            closeMLRModal();
+        }
+    }
+
     // Automatic slideshow for featured gallery cards
     document.addEventListener('DOMContentLoaded', function() {
         const cards = document.querySelectorAll('.artistic-gallery-card');
@@ -189,11 +447,308 @@
                     setInterval(() => {
                         idx = (idx + 1) % images.length;
                         img.src = images[idx];
-                    }, 3500); // Change image every 3.5 seconds
+                    }, 3500);
                 }
             }
         });
     });
 </script>
+
+<style>
+/* ============================================================
+   AI PORTRAIT INSIGHTS - CSS STYLES
+   ============================================================ */
+
+.ai-insights-section {
+    padding: 40px 20px;
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    border-radius: 20px;
+    margin-bottom: 40px;
+}
+
+.ai-insights-title {
+    font-family: 'Playfair Display', serif;
+    color: #2c3e50;
+    font-weight: 600;
+    margin-bottom: 10px;
+}
+
+.ai-card {
+    background: white;
+    border-radius: 16px;
+    padding: 30px 25px;
+    text-align: center;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+    transition: all 0.3s ease;
+    border: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.ai-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.12);
+}
+
+.ai-card-icon {
+    width: 70px;
+    height: 70px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 20px;
+    font-size: 28px;
+}
+
+.slr-card .ai-card-icon {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+}
+
+.mlr-card .ai-card-icon {
+    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    color: white;
+}
+
+.ai-card-title {
+    font-family: 'Poppins', sans-serif;
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: #2c3e50;
+    margin-bottom: 12px;
+}
+
+.ai-card-desc {
+    color: #6c757d;
+    font-size: 0.95rem;
+    margin-bottom: 20px;
+    line-height: 1.5;
+}
+
+.btn-ai-primary {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border: none;
+    padding: 12px 24px;
+    border-radius: 25px;
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+
+.btn-ai-primary:hover {
+    background: linear-gradient(135deg, #5568d3 0%, #6842a8 100%);
+    color: white;
+    transform: scale(1.02);
+    box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+}
+
+.btn-ai-secondary {
+    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    color: white;
+    border: none;
+    padding: 12px 24px;
+    border-radius: 25px;
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+
+.btn-ai-secondary:hover {
+    background: linear-gradient(135deg, #d878e0 0%, #e0455c 100%);
+    color: white;
+    transform: scale(1.02);
+    box-shadow: 0 5px 20px rgba(245, 87, 108, 0.4);
+}
+
+.ai-modal {
+    display: none;
+    position: fixed;
+    z-index: 9999;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(5px);
+    animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+.ai-modal-content {
+    background-color: white;
+    margin: 5% auto;
+    padding: 35px;
+    border-radius: 20px;
+    width: 90%;
+    max-width: 450px;
+    box-shadow: 0 25px 50px rgba(0, 0, 0, 0.25);
+    animation: slideIn 0.3s ease;
+    position: relative;
+}
+
+@keyframes slideIn {
+    from {
+        transform: translateY(-30px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+.ai-modal-close {
+    position: absolute;
+    right: 20px;
+    top: 15px;
+    font-size: 32px;
+    font-weight: bold;
+    color: #aaa;
+    cursor: pointer;
+    transition: color 0.2s;
+    line-height: 1;
+}
+
+.ai-modal-close:hover {
+    color: #333;
+}
+
+.ai-modal-title {
+    font-family: 'Playfair Display', serif;
+    color: #2c3e50;
+    font-size: 1.5rem;
+    margin-bottom: 5px;
+    text-align: center;
+}
+
+.ai-modal-subtitle {
+    text-align: center;
+    color: #6c757d;
+    margin-bottom: 25px;
+    font-size: 0.9rem;
+}
+
+.ai-form-group {
+    margin-bottom: 20px;
+}
+
+.ai-form-group label {
+    display: block;
+    font-weight: 500;
+    color: #2c3e50;
+    margin-bottom: 8px;
+    font-size: 0.95rem;
+}
+
+.ai-input, .ai-select {
+    width: 100%;
+    padding: 12px 15px;
+    border: 2px solid #e9ecef;
+    border-radius: 10px;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    background-color: #f8f9fa;
+}
+
+.ai-input:focus, .ai-select:focus {
+    outline: none;
+    border-color: #667eea;
+    background-color: white;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.ai-input-hint {
+    display: block;
+    margin-top: 5px;
+    color: #6c757d;
+    font-size: 0.8rem;
+}
+
+.ai-result-card {
+    margin-top: 25px;
+    padding: 20px;
+    border-radius: 12px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    text-align: center;
+    animation: slideIn 0.3s ease;
+}
+
+.ai-result-card.ai-result-green {
+    background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+}
+
+.ai-result-title {
+    font-size: 0.9rem;
+    opacity: 0.9;
+    margin-bottom: 8px;
+    font-weight: 500;
+}
+
+.ai-result-value {
+    font-size: 1.8rem;
+    font-weight: 700;
+    margin-bottom: 8px;
+}
+
+.ai-result-note {
+    display: block;
+    font-size: 0.75rem;
+    opacity: 0.8;
+    font-style: italic;
+}
+
+@media (max-width: 768px) {
+    .ai-modal-content {
+        margin: 10% auto;
+        padding: 25px;
+        width: 95%;
+    }
+    
+    .ai-card {
+        padding: 25px 20px;
+    }
+    
+    .ai-result-value {
+        font-size: 1.5rem;
+    }
+}
+
+/* Navbar AI Buttons */
+.btn-ai-nav {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white !important;
+    border: none;
+    padding: 6px 10px;
+    border-radius: 20px;
+    transition: all 0.3s ease;
+}
+
+.btn-ai-nav:hover {
+    background: linear-gradient(135deg, #5568d3 0%, #6842a8 100%);
+    color: white !important;
+    transform: scale(1.1);
+    box-shadow: 0 3px 10px rgba(102, 126, 234, 0.4);
+}
+
+.btn-ai-nav-secondary {
+    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    color: white !important;
+    border: none;
+    padding: 6px 10px;
+    border-radius: 20px;
+    transition: all 0.3s ease;
+}
+
+.btn-ai-nav-secondary:hover {
+    background: linear-gradient(135deg, #d878e0 0%, #e0455c 100%);
+    color: white !important;
+    transform: scale(1.1);
+    box-shadow: 0 3px 10px rgba(245, 87, 108, 0.4);
+}
+</style>
 {% endblock %}
 

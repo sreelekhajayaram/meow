@@ -376,11 +376,71 @@
 
     <!-- Exports Section -->
     <div class="exports-section">
-        <h6 class="exports-title mb-3">Quick Exports</h6>
+        <h6 class="exports-title mb-3">Quick Exports & Actions</h6>
         <a href="{% url 'export_orders_csv' %}" class="btn-export mr-2 mb-2">Orders CSV</a>
         <a href="{% url 'export_bookings_csv' %}" class="btn-export mr-2 mb-2">Bookings CSV</a>
         <a href="{% url 'export_users_csv' %}" class="btn-export mr-2 mb-2">Users CSV</a>
         <a href="{% url 'export_users_pdf' %}" class="btn-export mb-2">Users PDF</a>
+        <a href="{% url 'manage_feedback' %}" class="btn-export ml-2 mb-2" style="background: #f093fb; color: #fff; border-color: #f093fb;">
+            <i class="fas fa-comment-dots mr-1"></i> Feedback {% if pending_feedbacks_count > 0 %}<span class="badge badge-light ml-1">{{ pending_feedbacks_count }}</span>{% endif %}
+        </a>
+    </div>
+
+    <!-- Latest Feedback Section -->
+    <div class="section-card">
+        <div class="section-header">
+            <h5 class="section-title">
+                <i class="fas fa-comment-dots"></i> Recent Feedback
+            </h5>
+            <a href="{% url 'manage_feedback' %}" class="btn btn-modern btn-primary-modern">Manage Feedback</a>
+        </div>
+        <table class="admin-table">
+            <thead>
+                <tr>
+                    <th>Customer</th>
+                    <th>Rating</th>
+                    <th>Comment</th>
+                    <th>Status</th>
+                    <th class="text-right">Date</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for feedback in latest_feedbacks %}
+                    <tr>
+                        <td>
+                            <strong>{{ feedback.name }}</strong>
+                            {% if feedback.email %}<br><small class="text-muted">{{ feedback.email }}</small>{% endif %}
+                        </td>
+                        <td>
+                            <span class="badge-modern" style="background: rgba(250, 212, 66, 0.2); color: #d4a800;">
+                                {{ feedback.get_rating_display }}
+                            </span>
+                        </td>
+                        <td>
+                            {% if feedback.comment|length > 50 %}
+                                {{ feedback.comment|slice:":50" }}...
+                            {% else %}
+                                {{ feedback.comment }}
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if feedback.is_approved %}
+                                <span class="badge-modern" style="background: rgba(78, 205, 196, 0.1); color: #4ecdc4;">Approved</span>
+                            {% else %}
+                                <span class="badge-modern" style="background: rgba(255, 193, 7, 0.1); color: #ffc107;">Pending</span>
+                            {% endif %}
+                        </td>
+                        <td class="text-right">
+                            {{ feedback.created_at|date:"M d, Y" }}
+                        </td>
+                    </tr>
+                {% empty %}
+                    <tr>
+                        <td colspan="5" class="empty-state">No feedback yet.</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
     </div>
 
     <!-- Latest Orders -->

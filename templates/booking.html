@@ -45,6 +45,19 @@
                     </div>
                 </div>
             </div>
+            <!-- Frame Type - Part 1 -->
+<div class="col-md-6 mb-4">
+    <div class="form-group">
+        <label for="id_frame_type" class="form-label">
+            {{ form.frame_type.label }}
+        </label>
+        {{ form.frame_type }}
+        {% if form.frame_type.errors %}
+            <div class="invalid-feedback d-block">{{ form.frame_type.errors.0 }}</div>
+        {% endif %}
+        <small class="form-text text-muted">{{ form.frame_type.help_text }}</small>
+    </div>
+
 
             <div class="row">
                 <!-- Email -->
